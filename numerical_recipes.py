@@ -10,8 +10,26 @@ def triangle_num(xs):
 
 def triangle_num2(xs):
   ary = range(1, xs + 1)
-  return reduce(lambda a, b: a+b, ary, 0)
+  return reduce(lambda a, b: a + b, ary, 0)
 
-# pry()
+
+def qsort(xs):
+  if (len(xs) < 1):
+    return []
+  else:
+    return qsort(less(xs[0], xs[1:]) + xs[:1] + more_eq(xs[0], xs[1:]))
+
+
+def less(x, xs):
+  return list(filter(lambda t: t < x, xs))
+
+def more_eq(x, xs):
+  return list(filter(lambda t: t >= x, xs))
+
+
+ary=map(lambda x: 10-x, range(1,11))
+
 print triangle_num(5)
 print triangle_num2(3)
+
+print qsort(range(1,10))

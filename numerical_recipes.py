@@ -17,7 +17,7 @@ def qsort(xs):
   if (len(xs) < 1):
     return []
   else:
-    return qsort(less(xs[0], xs[1:]) + xs[:1] + more_eq(xs[0], xs[1:]))
+    return qsort(less(xs[0], xs[1:])) + xs[:1] + qsort(more_eq(xs[0], xs[1:]))
 
 
 def less(x, xs):
@@ -31,5 +31,4 @@ ary=map(lambda x: 10-x, range(1,11))
 
 print triangle_num(5)
 print triangle_num2(3)
-
-print qsort(range(1,10))
+print qsort(ary)

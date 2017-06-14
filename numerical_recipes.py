@@ -1,5 +1,6 @@
 # Herein live Numerical Recipes
-import operator
+from listables import reduce
+from operator import add
 import pdb
 
 def pry(): pdb.set_trace()
@@ -17,11 +18,11 @@ def gcd(a, b):
   if b == 0: return a
   else: return gcd(b, a % b)
 
-def triangle_num(xs):
-  return reduce(operator.add, range(xs), 0)
+def triangle_num(n):
+  return reduce(add, range(n), 0)
 
-def triangle_num2(xs):
-  return reduce(lambda a, b: a + b, range(xs), 0)
+def triangle_num2(n):
+  return reduce(lambda a, b: a + b, range(n), 0)
 
 def qsort(xs):
   if (len(xs) < 1): return []
@@ -34,13 +35,13 @@ def less(x, xs):
 def more_eq(x, xs):
   return list(filter(lambda t: t >= x, xs))
 
-ary = map(lambda x: 10-x, range(10))
+ary = list(map(lambda x: 10-x, range(10)))
 lamb = (lambda x: x+1)(2)
 
-# print triangle_num(5)
-# print triangle_num2(3)
-# print qsort(ary)
-# print div(10,2)
-# print mod(10,3)
-print gcd(36, 9)
+print(triangle_num(5))
+print(triangle_num2(3))
+print(qsort(ary))
+print(div(10,2))
+print(mod(10,3))
+print(ary)
 # pry()

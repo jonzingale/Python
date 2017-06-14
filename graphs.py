@@ -10,8 +10,8 @@ def havelhakimi(xs):
   else:
     (head, tail) = xs[0], xs[1:]
     mlist = list(map(lambda x: x-1, tail[:head]))
-    mlist += tail[head:] ; mlist.sort()
-    return havelhakimi(mlist)
+    mlist += tail[head:]
+    return havelhakimi(sorted(mlist))
 
 print(havelhakimi([2,3,4,3,2])) # no Erdos graphs
 print(havelhakimi([2,1,1])) # yes Erdos graphs

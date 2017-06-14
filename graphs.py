@@ -1,7 +1,7 @@
 from listables import reduce
 from operator import add, mul, mod, pow
 
-import pdb
+from pdb import set_trace
 
 # recursive HH
 def havelhakimi(xs):
@@ -16,3 +16,9 @@ def havelhakimi(xs):
 print(havelhakimi([2,3,4,3,2])) # no Erdos graphs
 print(havelhakimi([2,1,1])) # yes Erdos graphs
 
+
+# set_trace()
+# import timeit
+# print(timeit.timeit("havelhakimi([2,3,4,3,2])",
+#                     setup="from __main__ import havelhakimi",
+#                     number=10**5))

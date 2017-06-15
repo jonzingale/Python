@@ -29,3 +29,5 @@ slice_eq = list(range(0,101,10)) == list(range(0,101,1))[::10]
 
 def rev_deck(deck):
   for c in reversed(deck): print(c)
+
+# def key_shuffle(deck)

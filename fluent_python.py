@@ -1,5 +1,6 @@
+from random import choice, getrandbits
 import collections
-from random import choice
+import math
 
 Card = collections.namedtuple('Card', ['rank', 'suit'])
 
@@ -30,4 +31,27 @@ slice_eq = list(range(0,101,10)) == list(range(0,101,1))[::10]
 def rev_deck(deck):
   for c in reversed(deck): print(c)
 
-# def key_shuffle(deck)
+# Shuffling #
+def key_shuffle(deck):
+  size = len(deck)
+  zipped = list(zip(rands(size), deck))
+  zipped.sort()
+  it = zip(*zipped)
+  return list(it)[1]
+
+def rands(n):
+  ary = []
+  logn = math.log(n**3,2)
+  for i in range(n):
+    ary.append(getrandbits(math.floor(logn)))
+  return ary
+
+print(key_shuffle(deck))
+
+
+
+
+
+
+
+

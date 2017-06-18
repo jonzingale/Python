@@ -1,4 +1,5 @@
-from operator import add, mul, mod, pow
+# from operator import add, mul, mod, pow
+from operator import *
 import pdb
 
 def pry(): pdb.set_trace()

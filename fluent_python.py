@@ -1,6 +1,7 @@
 from random import choice, getrandbits
 import collections
 import math
+from pdb import set_trace
 
 Card = collections.namedtuple('Card', ['rank', 'suit'])
 
@@ -36,8 +37,7 @@ def key_shuffle(deck):
   size = len(deck)
   zipped = list(zip(rands(size), deck))
   zipped.sort()
-  it = zip(*zipped)
-  return list(it)[1]
+  return list(zip(*zipped))[1]
 
 def rands(n):
   ary = []
@@ -46,7 +46,10 @@ def rands(n):
     ary.append(getrandbits(math.floor(logn)))
   return ary
 
-print(key_shuffle(deck))
+# set_trace()
+
+ary = [] ; ary.extend(key_shuffle(deck))
+print(ary)
 
 
 

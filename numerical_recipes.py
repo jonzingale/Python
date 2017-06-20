@@ -1,9 +1,8 @@
 # Herein live Numerical Recipes
 from listables import reduce
 from operator import add
-import pdb
-
-def pry(): pdb.set_trace()
+from pdb import set_trace
+from random import *
 
 def div(n, d, i=0):
   while n >= d:
@@ -38,10 +37,32 @@ def more_eq(x, xs):
 ary = list(map(lambda x: 10-x, range(10)))
 lamb = (lambda x: x+1)(2)
 
-print(triangle_num(5))
-print(triangle_num2(3))
-print(qsort(ary))
-print(div(10,2))
-print(mod(10,3))
-print(ary)
-# pry()
+ls = [triangle_num(5),triangle_num2(3),qsort(ary),div(10,2),mod(10,3)]
+for i in ls: print(i)
+
+# PYTHAGOREAN TRIPLES
+def rand_triple():
+  ss = randint(1, 10**3)
+  rr = randint(1, ss)
+  if ss + rr % 2 == 0: ss += 1  
+  a = ss**2 - rr**2 
+  b = 2*rr*ss
+  c = rr**2 + ss**2
+  return([a,b,c])
+
+def test_triple(ary):
+  a, b, c = ary
+  print(a**2 + b**2 == c**2)
+
+test_triple(rand_triple())
+
+
+
+
+
+
+
+
+
+
+

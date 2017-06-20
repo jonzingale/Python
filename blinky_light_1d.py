@@ -2,31 +2,41 @@ from random import *
 from pdb import set_trace
 from time import sleep
 
-# perhaps use bitstrings.
+SEEDS = [[0] * 30 + [1,1] + [0] * 30, None]
+
 class Blinky():
-  def __init__(self):
-    self.seed_state()
+  def __init__(self, seed=None, rule=90):
+    if seed is None: self.seed_state()
+    else: self.state = seed
+    self.rule = self.to_binary(rule)
 
   def seed_state(self):
     self.state = []
     for i in range(60):
       self.state.append(randint(0,1))
 
+  def to_binary(self, num, ary=[]):
+    while num > 0:
+      ary.insert(0, num % 2)
+      num //= 2
+    while len(ary) < 8: ary.insert(0,0)
+    return ary
+
+  def to_decimal(self, bry, num=0):
+    for i in range(0,len(bry)):
+      num += (2**i * bry.pop())
+    return(num)
+
   def apply_rule(self, ury):
-    # [000, 001, 010, 011, 100, 101, 110, 111]
-    if [0,0,0] == ury: return(0)
-    elif [0,0,1] == ury: return(1)
-    elif [0,1,0] == ury: return(0)
-    elif [0,1,1] == ury: return(1)
-    elif [1,0,0] == ury: return(1)
-    elif [1,0,1] == ury: return(1)
-    elif [1,1,0] == ury: return(1)
-    elif [1,1,1] == ury: return(0)
-    else : None
+    rule_hash = {}
+    val = self.to_decimal(ury)
+    for i in range(0,8):
+      rule_hash.update({i: self.rule[i]})
+
+    return(rule_hash[val])
 
   def get_neighbors(self):
-    state_len = len(self.state) - 1  
-    ns = []
+    state_len, ns = len(self.state) - 1, []
     for i in range(1, state_len): ns.append(self.state[i-1:i+2])
     self.neighborhoods = ns
 
@@ -39,14 +49,14 @@ class Blinky():
       new_state.append(cell)
     self.state = new_state + self.state[-1:]
 
-  def ppblink(self):
-    str = ''
+  def ppblink(self, str=''):
     for i in self.state:
       if i == 0: str += ' '
       else: str += '*'
     print(str)
 
-it = Blinky()
+# Execute example automata:
+it = Blinky(SEEDS[randint(0,1)], 90)
 
 for i in range(10**2):
   it.blink()

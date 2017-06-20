@@ -1,0 +1,6 @@
+# To activate this environment, use:
+# > source activate tensorflow
+#
+# To deactivate this environment, use:
+# > source deactivate tensorflow
+#

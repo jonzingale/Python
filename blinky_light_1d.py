@@ -57,7 +57,8 @@ class Blinky():
     print(str)
 
 # Execute example automata:
-it = Blinky(SEEDS[randint(0,1)], 90)
+rand_rule = SEEDS[randint(0,1)]
+it = Blinky(rand_rule, 90)
 
 for i in range(10**2):
   it.blink()

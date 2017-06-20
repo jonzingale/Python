@@ -12,10 +12,11 @@ class Blinky():
 
   def seed_state(self):
     self.state = []
-    for i in range(60):
+    for i in range(150): # set number of columns.
       self.state.append(randint(0,1))
 
   def to_binary(self, num, ary=[]):
+    num = num % 256 # ensure rule range.
     while num > 0:
       ary.insert(0, num % 2)
       num //= 2
@@ -25,7 +26,7 @@ class Blinky():
   def to_decimal(self, bry, num=0):
     for i in range(0,len(bry)):
       num += (2**i * bry.pop())
-    return(num)
+    return num
 
   def apply_rule(self, ury):
     rule_hash = {}

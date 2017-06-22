@@ -57,10 +57,12 @@ class Blinky():
     print(str)
 
 # Execute example automata:
-rand_rule = SEEDS[randint(0,1)]
-it = Blinky(rand_rule, 90)
+rand_seed = SEEDS[randint(0,1)]
+rand_rule = [150, 90, 180, 45][randint(0,3)]
+right_assoc = [0] * 140 + [1,1]
+it = Blinky(right_assoc, rand_rule)
 
-for i in range(10**2):
+for i in range(10**3):
   it.blink()
   it.ppblink()
   sleep(0.1)

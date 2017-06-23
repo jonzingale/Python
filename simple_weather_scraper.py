@@ -3,15 +3,10 @@ from pdb import set_trace as st
 from pprint import pprint as pp
 import descarteslabs as dl
 import urllib3
-import lxml
 import os
 
-lat_long = 'lat=35.6879&lon=-105.9447'
-
 NWS_URL = 'http://forecast.weather.gov/MapClick.php?lat=%s&lon=%s'
-
 USER_AGENT = {'user-agent': 'Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0'}
-NWS_HEADER = {'Accept' : 'application/vnd.noaa.dwml+xml;version=1'}
 
 # see descartes labs docs for places.find
 def get_coords_url(place):
@@ -41,11 +36,10 @@ def main():
   sf = get_santa_fe()
 
   # nws weather data
-  temp_max = sf.find('p', class_='myforecast-current-lrg').text
-  temp_min = sf.find('p', class_='myforecast-current-sm').text
+  temp = sf.find('p', class_='myforecast-current-lrg').text
   details = sf.find('div', id="current-conditions-body")
 
-  data = {'High': temp_max, 'Low': temp_min}
+  data = {'Temp': temp}
 
   for tr in details.find_all('tr'):
     key, val = map(lambda x: x.text, tr.find_all('td'))

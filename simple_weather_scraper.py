@@ -48,8 +48,7 @@ def main():
   data = {'High': temp_max, 'Low': temp_min}
 
   for tr in details.find_all('tr'):
-    datum = map(lambda x: x.text, tr.find_all('td'))
-    key, val = [*datum]
+    key, val = map(lambda x: x.text, tr.find_all('td'))
     data[key] = val.strip()
 
   pp(data)

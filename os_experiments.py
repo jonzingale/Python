@@ -16,5 +16,6 @@ def contents_of_crude():
   ff.sort()
   pp(ff)
 
+os.system('clear')
 
 contents_of_crude()

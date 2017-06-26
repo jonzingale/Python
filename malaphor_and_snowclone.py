@@ -2,6 +2,7 @@ from pprint import pprint as pp
 from pdb import set_trace as st
 from lxml import html
 import requests
+import nltk
 
 # This module scrapes malaphors and snoclones,
 # and then generating them via tensor flow neural net.
@@ -40,3 +41,15 @@ def snowclone():
 malaphor()
 print('\n')
 snowclone()
+
+# Natural Language Parsing
+ sentence = """At eight o'clock on Thursday morning
+               Arthur didn't feel very good."""
+
+tokens = nltk.word_tokenize(sentence)
+tagged = nltk.pos_tag(tokens)
+entities = nltk.chunk.ne_chunk(tagged)
+from nltk.corpus import treebank
+t = treebank.parsed_sents('wsj_0001.mrg')[0]
+t.draw()
+st()

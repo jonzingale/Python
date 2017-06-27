@@ -75,9 +75,12 @@ def parse_contents(page, tree): # should become method on page object.
 
 def get_bookdata(page, tree):
   book_stub_sel = tree.xpath(BOOK_SEL)
+
+  # If a list of possible books is returned.
   if book_stub_sel:
     book_stub = book_stub_sel[0]
     tree, page = get_page(LOC_URL + book_stub)
+
   parse_contents(page, tree)
 
 def books_search(title='', tries=30):
@@ -90,9 +93,9 @@ def books_search(title='', tries=30):
     error = tree.xpath(ERROR_SEL)
 
     if error and error[0] == NO_RESULTS:
-      print(error[0])
+      print(NO_RESULTS)
       break
-    elif error:
+    elif error: # No Connections Available
       print((error[0], tries))
       time.sleep(1)
       tries -= 1

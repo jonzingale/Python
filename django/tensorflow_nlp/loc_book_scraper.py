@@ -11,6 +11,7 @@ BOOK_REGEX_ARY = ['Personal name','(Uniform|Main) title','LC classification',
 
 USER_AGENT = {'user-agent': 'Mozilla/5.0 (Windows NT 6.3; rv:36.0)'}
 LOC_URL = 'https://catalog.loc.gov/vwebv/'
+NO_RESULTS = 'Your search found no results.'
 
 BOOK_SEL = './/div[@class="search-results-list-description-item search-results-list-description-title"]/a/@href'
 ERROR_SEL = '//div[@class="error-container"]/h3/text()'
@@ -73,8 +74,10 @@ def parse_contents(page, tree): # should become method on page object.
   book_data['isbn'] = isbn
 
 def get_bookdata(page, tree):
-  book_stub = tree.xpath(BOOK_SEL)[0]
-  tree, page = get_page(LOC_URL + book_stub)
+  book_stub_sel = tree.xpath(BOOK_SEL)
+  if book_stub_sel:
+    book_stub = book_stub_sel[0]
+    tree, page = get_page(LOC_URL + book_stub)
   parse_contents(page, tree)
 
 def books_search(title='', tries=30):
@@ -86,7 +89,10 @@ def books_search(title='', tries=30):
 
     error = tree.xpath(ERROR_SEL)
 
-    if error:
+    if error and error[0] == NO_RESULTS:
+      print(error[0])
+      break
+    elif error:
       print((error[0], tries))
       time.sleep(1)
       tries -= 1

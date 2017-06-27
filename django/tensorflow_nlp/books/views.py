@@ -22,6 +22,7 @@ def books_new(request):
             # to pick up queue run: python manage.py rqworker default
             queue = django_rq.get_queue('default')
             queue.enqueue(find_book, title)
+            # return redirect('book_detail', pk=post.pk) # HOW TO REDIRECT?
     else:
         form = BookForm()
     return render(request, 'books/book_edit.html', {'form': form})

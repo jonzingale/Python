@@ -1,8 +1,12 @@
+from pdb import set_trace as st
+from nltk.tree import Tree
 import nltk
 
+ss = 'The red tree is staring out the foggy window.'
 
-sentence = 'Dang dude! That was the last burrito in the house.'
-tokens = nltk.word_tokenize(sentence)
+tokens = nltk.word_tokenize(ss)
 tagged = nltk.pos_tag(tokens)
 entities = nltk.chunk.ne_chunk(tagged)
-entities.draw()
+# entities.draw()
+
+print(tagged)

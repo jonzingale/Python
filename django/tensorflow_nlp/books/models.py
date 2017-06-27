@@ -1,7 +1,5 @@
 from django.db import models
 
-# b = Book(title=str, author='S. Mac Lane',lccn='QA169 .M33 1994', isbn='0387900357', pub_year = '1994')
-
 class Book(models.Model):
     title = models.CharField(max_length=200)
     author = models.CharField(max_length=200)

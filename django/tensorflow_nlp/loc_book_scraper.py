@@ -78,7 +78,7 @@ def get_bookdata(page, tree):
 
   # If a list of possible books is returned.
   if book_stub_sel:
-    book_stub = book_stub_sel[0]
+    book_stub = book_stub_sel[0] #<-- Select more Cleverly.
     tree, page = get_page(LOC_URL + book_stub)
 
   parse_contents(page, tree)

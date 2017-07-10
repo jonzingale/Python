@@ -3,18 +3,6 @@ from sqlite3 import dbapi2 as sqlite
 from pdb import set_trace as st
 import pandas as pd
 
-def test(): # import pci_neural_net as nn
-  wWorld, wRiver, wBank = 101, 102, 103
-  uWorldBank, uRiver, uEarth = 201, 202, 203
-  list1 = [wWorld, wBank]
-  list2 = [uWorldBank, uRiver, uEarth]
-  mynet = searchnet('nn.db')
-
-  print(f"Before Training: {mynet.getresult(list1, list2)}")
-  mynet.trainquery(list1, list2, uWorldBank)
-  print(f"After Training: {mynet.getresult(list1, list2)}")
-
-
 GETSTRENGTH_QUERY = 'select strength from %s where fromid=%d and toid=%d'
 SETSTRENGTH_QUERY = 'select rowid from %s where fromid=%d and toid=%d'
 INSSTRENGTH_QUERY = 'insert into %s (fromid, toid, strength) values (%d,%d,%f)'
@@ -24,19 +12,42 @@ CREATEHIDDEN_QUERY = "insert into hiddennode (create_key) values ('%s')"
 GETWORDHIDDEN_QUERY = 'select toid from wordhidden where fromid=%d'
 GETURLHIDDEN_QUERY = 'select fromid from hiddenurl where toid=%d'
 
+TABLES = ['wordhidden', 'hiddennode', 'hiddenurl']
+
+# perhaps a method to recover words or urls from ids.
+# yeah. just use the actual record ids and store the name.
+
 def dtanh(y): return(1.0-y*y)
 
-class searchnet: 
+# WORD -WORDHIDDEN-> HIDDENNODE -HIDDENURL-> URL
+class searchnet:
   def __init__(self, dbname):
     self.con = sqlite.connect(dbname)
+    self.cur = self.con.cursor()
 
   def __del__(self):
     self.con.close()
 
+  def droptables(self):
+    for table in TABLES:
+      self.con.execute(f"drop table {table}")
+
+  # def tables(self):
+    
+
+  def showtablerows(self):
+    for table in TABLES:
+      rows = self.con.execute(f"select * from {table}")
+      print(f"{table}")
+      for row in rows: print(row)
+      print('\n')
+
   def maketables(self):
-    self.con.execute('create table hiddennode(create_key)')
+    self.con.execute('create table word')
     self.con.execute('create table wordhidden(fromid,toid,strength)')
+    self.con.execute('create table hiddennode(create_key)')
     self.con.execute('create table hiddenurl(fromid,toid,strength)')
+    self.con.execute('create table url')
     self.con.commit()
 
   def getstrength(self, fromid, toid, layer):

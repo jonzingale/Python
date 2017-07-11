@@ -22,13 +22,13 @@ def get_ids(word_array, table_name):
 
 def test(mynet):
   all_words = get_ids(WORDS, 'word')
-  list1 = all_words[0:3] # from single title
+  list1 = all_words[5:13] # from single title
   list2 = get_ids(LCCN_WS, 'url')
 
   # generates hiddennode if one is not present.
   mynet.generatehiddennode(list1, list2)
 
-  correct_url = list2[1] # QA
+  correct_url = list2[0] # T
 
   print(f"Before Training: {mynet.getresult(list1, list2)}")
   for i in range(20):

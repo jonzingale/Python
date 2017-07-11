@@ -109,16 +109,13 @@ class searchnet:
       self.con.execute(UPDATE_STRENGTH_QUERY % (table, strength, rowid))
 
   def generatehiddennode(self, wordids, urls):
-    print(wordids)
-
-    if len(wordids) > 3: return(None) # SHORT KEYS?
+    if len(wordids) > 10: return(None) # SHORT KEYS?
     # Check if a node already exists for this set of words.
     createkey = '_'.join(sorted([str(wi) for wi in wordids]))
     res = self.con.execute(GETHIDDEN_QUERY % createkey).fetchone()
 
     # If node does not already exist.
     if res == None:
-      st()
       cur = self.con.execute(CREATEHIDDEN_QUERY % createkey)
       hiddenid = cur.lastrowid
       

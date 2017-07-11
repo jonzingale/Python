@@ -2,6 +2,7 @@ from math import tanh
 from sqlite3 import dbapi2 as sqlite
 from pdb import set_trace as st
 import pandas as pd
+import time
 
 GETSTRENGTH_QUERY = 'select strength from %s where fromid=%d and toid=%d'
 SETSTRENGTH_QUERY = 'select rowid from %s where fromid=%d and toid=%d'
@@ -12,10 +13,8 @@ CREATEHIDDEN_QUERY = "insert into hiddennode (create_key) values ('%s')"
 GETWORDHIDDEN_QUERY = 'select toid from wordhidden where fromid=%d'
 GETURLHIDDEN_QUERY = 'select fromid from hiddenurl where toid=%d'
 
-TABLES = ['wordhidden', 'hiddennode', 'hiddenurl']
-
-# perhaps a method to recover words or urls from ids.
-# yeah. just use the actual record ids and store the name.
+TABLES = ['word','wordhidden', 'hiddennode', 'hiddenurl','url']
+# ROWID
 
 def dtanh(y): return(1.0-y*y)
 
@@ -25,6 +24,13 @@ class searchnet:
     self.con = sqlite.connect(dbname)
     self.cur = self.con.cursor()
 
+    # .headers on
+    # .mode column
+
+  def q(self, query):
+    resp = self.con.execute(query).fetchall()
+    return(resp)
+
   def __del__(self):
     self.con.close()
 
@@ -32,8 +38,41 @@ class searchnet:
     for table in TABLES:
       self.con.execute(f"drop table {table}")
 
-  # def tables(self):
-    
+  def inserturls(self, ary): # insert words into database
+    # verify that words are unique. If so stuff'em in the database.
+    url_rows = self.con.execute('select * from url').fetchall()
+
+    current_urls = []
+    for url in url_rows: current_urls.append(url[0])
+
+    for url in ary:
+      if url not in current_urls:
+        self.con.execute("insert into url values('%s')" % url)
+        # test that url is in database.
+        query = "select word from word where word='%s'" % word
+        stored_row = self.con.execute(query).fetchone()
+        current_urls.append(stored_row[0])
+
+    text = "Total urls: %s" % current_urls
+    print(text)
+
+  def insertwords(self, ary): # insert words into database
+    # verify that words are unique. If so stuff'em in the database.
+    word_rows = self.con.execute('select * from word').fetchall()
+
+    current_words = []
+    for word in word_rows: current_words.append(word[0])
+
+    for word in ary:
+      if word not in current_words:
+        self.con.execute("insert into word values('%s')" % word)
+        # test that word is in database.
+        query = "select word from word where word='%s'" % word
+        stored_row = self.con.execute(query).fetchone()
+        current_words.append(stored_row[0])
+
+    text = "Total Words: %s" % current_words
+    print(text)
 
   def showtablerows(self):
     for table in TABLES:
@@ -43,11 +82,11 @@ class searchnet:
       print('\n')
 
   def maketables(self):
-    self.con.execute('create table word')
+    self.con.execute('create table word(word)')
     self.con.execute('create table wordhidden(fromid,toid,strength)')
     self.con.execute('create table hiddennode(create_key)')
     self.con.execute('create table hiddenurl(fromid,toid,strength)')
-    self.con.execute('create table url')
+    self.con.execute('create table url(url)')
     self.con.commit()
 
   def getstrength(self, fromid, toid, layer):
@@ -70,13 +109,16 @@ class searchnet:
       self.con.execute(UPDATE_STRENGTH_QUERY % (table, strength, rowid))
 
   def generatehiddennode(self, wordids, urls):
-    if len(wordids) > 3: return(None)
+    print(wordids)
+
+    if len(wordids) > 3: return(None) # SHORT KEYS?
     # Check if a node already exists for this set of words.
     createkey = '_'.join(sorted([str(wi) for wi in wordids]))
     res = self.con.execute(GETHIDDEN_QUERY % createkey).fetchone()
 
     # If node does not already exist.
     if res == None:
+      st()
       cur = self.con.execute(CREATEHIDDEN_QUERY % createkey)
       hiddenid = cur.lastrowid
       
@@ -169,12 +211,12 @@ class searchnet:
   def trainquery(self, wordids, urlids, selectedurl):
     # generate a hidden node if necessary
     self.generatehiddennode(wordids, urlids)
-
     self.setupnetwork(wordids, urlids)
     self.feedforward()
+
     targets = [0.0] * len(urlids)
     targets[urlids.index(selectedurl)] = 1.0
-    error = self.backPropagate(targets)
+    self.backPropagate(targets)
     self.updatedatabase()
 
   def updatedatabase(self):

@@ -7,8 +7,8 @@ LCCN_WS = ["T", "QA", "QC", "P", "PL", "Q"]
 mynet = nn.searchnet('nn.db')
 
 # unless things work.
-# mynet.droptables()
-# mynet.maketables()
+mynet.droptables()
+mynet.maketables()
 
 mynet.insertwords(WORDS)
 mynet.inserturls(LCCN_WS)

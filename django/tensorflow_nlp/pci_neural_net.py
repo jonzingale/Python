@@ -49,7 +49,7 @@ class searchnet:
       if url not in current_urls:
         self.con.execute("insert into url values('%s')" % url)
         # test that url is in database.
-        query = "select word from word where word='%s'" % word
+        query = "select url from url where url='%s'" % url
         stored_row = self.con.execute(query).fetchone()
         current_urls.append(stored_row[0])
 

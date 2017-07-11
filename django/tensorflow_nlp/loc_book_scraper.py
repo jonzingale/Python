@@ -67,6 +67,8 @@ def parse_contents(page, tree): # should become method on page object.
   clean_author = re.match('edited by (.+)', author)
   if clean_author: author = clean_author.group(1)
 
+  # TODO: truncate strings if too long. clean strings
+  # when inevitably they contain funny characters.
   book_data['title'] = title.split('/')[0].strip()
   book_data['author'] = author
   book_data['pub_year'] = int(pub_year)

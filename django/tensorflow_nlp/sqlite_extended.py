@@ -1,6 +1,6 @@
-# This module extends functionality for sqlite3.
-
 from sqlite3 import dbapi2 as sqlite
+
+# This module extends functionality for sqlite3.
 
 ROW_QUERY = 'select ROWID from %s'
 TABLE_QUERY = "SELECT name FROM sqlite_master WHERE type='table'"

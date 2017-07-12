@@ -4,14 +4,15 @@ import re
 
 # cleaning library data for neural net.
 
-# verify that this path works as it should.
-FILENAME = '~/Desktop/books_book_view.csv'
+FILENAME = './books_book_view.csv'
 
 def get_titles_and_prefixes():
   title_words, lccn_prefix = [], []
+
   with open(FILENAME, newline='') as csvfile:
     book_csv = csv.reader(csvfile, delimiter=',')
     next(book_csv, None) # skip header
+
     for row in book_csv:
       # title cleaning
       words = row[1].split()
@@ -29,6 +30,5 @@ def get_titles_and_prefixes():
 
   return([title_words, lccn_prefix])
 
-
-resp = get_titles_and_prefixes()
-print("title words:\n%s\n\nprefixes:\n%s" % (resp[0], resp[1]))
+words, prefixes = get_titles_and_prefixes()
+print("title words:\n%s\n\nprefixes:\n%s" % (words, prefixes))

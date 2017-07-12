@@ -4,18 +4,18 @@ from pdb import set_trace as st
 WORDS = ["categories", "for", "the", "working", "mathematician", "programming", "collective", "intelligence", "building", "smart", "web", "20", "applications", "elementary", "categories", "elementary", "toposes", "conceptual", "mathematics", "first", "introduction", "to", "thermal", "physics", "methods", "in", "number", "theory", "an", "of", "numbers", "by", "ivan", "niven", "and", "herbert", "zuckerman", "differential", "equations", "dynamical", "systems", "an", "chaos", "gauge", "fields", "knots", "gravity", "finite", "markov", "chains", "john", "kemeny", "laurie", "snell", "de", "la", "grammatologie", "english", "vintage", "murakami", "introduction", "probability", "its", "russian", "algebraic", "geometry", "statistical", "learning", "sets"]
 LCCN_WS = ["T", "QA", "QC", "P", "PL", "Q"]
 
-mynet = nn.searchnet('nn.db')
+mynet = nn.librarynet('nn.db')
 
-# unless things work.
+# uncomment to start fresh:
 mynet.droptables()
 mynet.maketables()
 
-mynet.insertwords(WORDS)
-mynet.inserturls(LCCN_WS)
+mynet.insertdata(WORDS, 'word')
+mynet.insertdata(LCCN_WS, 'url')
 
 def get_ids(word_array, table_name):
   query = "select ROWID from %s" % table_name
-  resp, ids = mynet.q(query), []
+  resp, ids = mynet.qqs(query), []
 
   for row in resp: ids.append(row[0])
   return(ids)
@@ -37,8 +37,5 @@ def test(mynet):
     for val in mynet.getresult(list1, list2): result.append(round(val, 4))
     print(f"After Training: {result}")
 
-def run_test(mynet):
-  # mynet.showtablerows()
-  test(mynet)
-
-run_test(mynet)
+test(mynet)
+# st()

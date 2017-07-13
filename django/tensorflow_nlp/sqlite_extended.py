@@ -1,5 +1,5 @@
 from sqlite3 import dbapi2 as sqlite
-
+from pdb import set_trace as st
 # This module extends functionality for sqlite3.
 
 ROW_QUERY = 'select ROWID from %s'
@@ -24,6 +24,10 @@ class sql_ext:
   def row_q(self, tablename): # :: String -> [RowId]
     resp = self.qqs(ROW_QUERY % tablename)
     return([row[0] for row in resp])
+
+  def maketable(self, tablename, *colnames):
+    colnames = '(%s)' % ','.join(str(v) for v in colnames)
+    self.con.execute('create table %s%s' % (tablename, colnames))
 
   def droptables(self):
     tables = self.get_tablenames()

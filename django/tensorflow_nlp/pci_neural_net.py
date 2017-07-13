@@ -35,11 +35,11 @@ class librarynet(sql_ext):
     print(text)
 
   def maketables(self):
-    self.con.execute('create table word(word)')
-    self.con.execute('create table wordhidden(fromid,toid,strength)')
-    self.con.execute('create table hiddennode(create_key)')
-    self.con.execute('create table hiddenurl(fromid,toid,strength)')
-    self.con.execute('create table url(url)')
+    self.maketable('word', 'word')
+    self.maketable('wordhidden', 'fromid', 'toid', 'strength')
+    self.maketable('hiddennode', 'create_key')
+    self.maketable('hiddenurl', 'fromid', 'toid', 'strength')
+    self.maketable('url', 'url')
     self.con.commit()
 
   def getstrength(self, fromid, toid, layer):
@@ -63,7 +63,7 @@ class librarynet(sql_ext):
       self.con.execute(UPDATE_STRENGTH_QUERY % (table, strength, rowid))
 
   def generatehiddennode(self, wordids, urls):
-    if len(wordids) > 10: return(None) # SHORT KEYS?
+    if len(wordids) > 10: wordids = wordids[:10] # SHORT KEYS?
     # Check if a node already exists for this set of words.
     createkey = '_'.join(sorted([str(wi) for wi in wordids]))
     res = self.qq(HIDDENNODE_QUERY % createkey)
@@ -167,7 +167,7 @@ class librarynet(sql_ext):
     self.feedforward()
 
     targets = [0.0] * len(urlids)
-    targets[urlids.index(selectedurl)] = 1.0
+    targets[urlids.index(selectedurl + 1)] = 1.0 # (+ 1) because ids in DB
     self.backPropagate(targets)
     self.updatedatabase()
 

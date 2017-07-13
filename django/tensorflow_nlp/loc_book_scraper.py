@@ -1,6 +1,6 @@
 from pprint import pprint as pp
 from pdb import set_trace as st
-from books.models import Book # comment out when testing.
+from books.models import Book # comment out when testing without server.
 from lxml import html
 import requests
 import time
@@ -55,6 +55,8 @@ def get_page(url, url_params=''):
   return (tree, page)
 
 def parse_contents(page, tree): # should become method on page object.
+  # if tree.xpath(ERROR_SEL): st()
+
   data = []
   for datum in BOOK_REGEX_ARY: data.append(get_data_by_tag(tree, datum))
   author, title, lccn, isbn, pub_created, *extras = data

@@ -33,6 +33,9 @@ def title_ids(title_words):
     word_ids.append(word_id)
   return(word_ids)
 
+# TODO: Getting title_ids needs to be abstracted.
+# I don't want to rely on hand cleaning titles
+# which are input and finding their IDS manually.
 def get_best_guess(mynet, title_ids): # put this in pci_neural_net
   prefix_ids = get_ids('url')
   result = mynet.getresult(title_ids, prefix_ids)

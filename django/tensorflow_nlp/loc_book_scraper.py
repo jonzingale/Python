@@ -13,7 +13,7 @@ USER_AGENT = {'user-agent': 'Mozilla/5.0 (Windows NT 6.3; rv:36.0)'}
 LOC_URL = 'https://catalog.loc.gov/vwebv/'
 NO_RESULTS = 'Your search found no results.'
 
-BOOK_SEL = './/div[@class="search-results-list-description-item search-results-list-description-title"]/a/@href'
+BOOK_LINK = './/div[@class="search-results-list-description-item search-results-list-description-title"]/a'
 ERROR_SEL = '//div[@class="error-container"]/h3/text()'
 BOOK_VAL_SEL = './following-sibling::ul/li//span'
 BOOK_DATA_SEL = './/span[@dir="ltr"]/text()'
@@ -69,20 +69,27 @@ def parse_contents(page, tree): # should become method on page object.
   clean_author = re.match('edited by (.+)', author)
   if clean_author: author = clean_author.group(1)
 
-  # TODO: truncate strings if too long. clean strings
-  # when inevitably they contain funny characters.
-  book_data['title'] = title.split('/')[0].strip()
-  book_data['author'] = author
+  # Make Title Ascii clean
+  title = title.split('/')[0].strip()
+  clean_title = ''.join(e for e in title if e.isalnum() or e == ' ')
+
+  book_data['title'] = clean_title[:200] # db len limit.
+  book_data['author'] = author[:200]
   book_data['pub_year'] = int(pub_year)
   book_data['lccn'] = lccn
   book_data['isbn'] = isbn
 
 def get_bookdata(page, tree):
-  book_stub_sel = tree.xpath(BOOK_SEL)
+  book_links = tree.xpath(BOOK_LINK)
 
   # If a list of possible books is returned.
-  if book_stub_sel:
-    book_stub = book_stub_sel[0] #<-- Select more Cleverly.
+  if book_links:
+    book_stubs = []
+    for book in book_links: # Remove sound recordings from query response.
+      if not re.search('\[sound recording\]', book.text):
+        book_stubs.append(book)
+
+    book_stub = book_stubs[0].xpath('./@href')[0] # <-- Select more Cleverly.
     tree, page = get_page(LOC_URL + book_stub)
 
   parse_contents(page, tree)
@@ -110,6 +117,11 @@ def books_search(title='', tries=30):
       bb = Book(**book_data)
       bb.save()
       break
-  
+
+def clean_title(title):
+  clean_title = re.sub('^(the|a|an) ','',title.lower())
+  return(clean_title)
+
 def find_book(title='categories for the working mathematician'):
+  title = clean_title(title)
   books_search(title)

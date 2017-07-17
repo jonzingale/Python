@@ -39,6 +39,12 @@ class sql_ext:
     tables = self.qqs(TABLE_QUERY)
     return([table[0] for table in tables])
 
+  def get_ids(self, table_name):
+    query = "select ROWID from %s" % table_name
+    resp, ids = self.qqs(query), []
+    for row in resp: ids.append(row[0])
+    return(ids)
+
   def showtablesrows(self):
     tables = self.get_tablenames()
     for table in tables:

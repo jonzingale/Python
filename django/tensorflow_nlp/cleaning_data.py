@@ -37,6 +37,7 @@ def title_prefix_pairs(): # words generally for database
       mt = re.match('^\D+',row[3])
       if mt : lccn_prefix.append(mt[0])
       pairs.append((clean_title, mt[0]))
+
   return(pairs)
 
 def get_titles_and_prefixes(): # cleaned titles as titles

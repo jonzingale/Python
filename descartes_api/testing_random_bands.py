@@ -16,11 +16,18 @@ from pdb import set_trace as st
 from random import *
 import datetime
 
+# MODIS9 : Moderate Resolution Imaging Spectroradiometer
+# L7, L8 : LandSat Satellite
+# S2A: Sentinel 2A
+
 # Find potential AOI matches
-matches = dl.places.find('new-mexico_santa-fe')
+# matches = dl.places.find('ireland')
+matches = dl.places.find('new-mexico_taos')
+# matches = dl.places.find('oregon_multnomah')
+# matches = dl.places.find('new-mexico_santa-fe')
 # matches = dl.places.find('ohio_cuyahoga')
 # matches = dl.places.find('texas_travis')
-# pprint(matches)
+if not matches: st()
 
 # The first one looks good, so let's make that our area of interest.
 aoi = matches[0]
@@ -31,10 +38,9 @@ def get_bands():
   return(bands)
 
 def get_feature_collection(const_id, aoi):
-  # searches for imagery
   rand_date = datetime.date(2016, randint(1,12), randint(1,28))
   rand_start = rand_date.strftime('%Y-%m-%d')
-  rand_end = (rand_date + datetime.timedelta(days=10)).strftime('%Y-%m-%d')
+  rand_end = (rand_date + datetime.timedelta(days=14)).strftime('%Y-%m-%d')
 
   feature_collection = dl.metadata.search(const_id=const_id,
                                           start_time=rand_start,
@@ -49,15 +55,15 @@ def view_bands_and_ranges(const_id):
   return(list(paired))
 
 def appropriate_ranges(band_names, const_id):
-  ranges, band_data = [], dl.raster.get_bands_by_constellation(const_id)
+  band_data = dl.raster.get_bands_by_constellation(const_id)
+  ranges, physical_ranges = [], []
 
   for band in band_names:
     if band in band_data.keys():
-      ranger =  band_data[band]['valid_range']
-      ranged = list(map(lambda x: x/1.0, ranger))# rescale here.
-      ranges.append(ranged)
+      ranges.append(band_data[band]['valid_range'])
+      physical_ranges.append(band_data[band]['physical_range'])
     else: ranges.append(None)
-  return(ranges)
+  return([ranges, physical_ranges])
 
 def get_randomized_bands(const_id):
   len_bands_list, features = 0, []
@@ -66,7 +72,6 @@ def get_randomized_bands(const_id):
     bands = get_bands()
     rando = randint(0, len(bands)-1)
     const_id = bands[rando]
-    # const_id = 'L8'
     feature_collection = get_feature_collection(const_id, aoi)
     features = feature_collection['features']
     avail_bands = dl.raster.get_bands_by_constellation(const_id).keys()
@@ -75,41 +80,42 @@ def get_randomized_bands(const_id):
   shuffle(bands_list)
   return([bands_list[:4], feature_collection, const_id])
 
-def print_available_bands(const_id='modis09'):
-  somebands, feature_collection, const_id = get_randomized_bands(const_id) 
-  scale_ranges = appropriate_ranges(somebands, const_id)
-
+def get_raster(bands, const_id, feature_collection):
   # Collect the id's for each feature
   ids = [f['id'] for f in feature_collection['features']]
+  scales, physical_ranges = appropriate_ranges(bands, const_id)
 
   # Rasterize the features.
   arr, meta = dl.raster.ndarray(
       ids,
-      bands=somebands,
-      scales=scale_ranges,
-      data_type='Byte', # Choose an output type of "Byte" (uint8)
-      resolution=60, # Choose 60m resolution
-      cutline=shape['geometry'], # Apply a cutline of Taos county
+      bands=bands,
+      scales=physical_ranges,
+      data_type='Byte',# Float32' 'Float64' 'Byte'
+      resolution=60, # 60m
+      cutline=shape['geometry'],
   )
-
-  plt.figure(figsize=[10,10], facecolor='k')
+  plt.figure(figsize=[7,7], facecolor='k')
   plt.axis('off')
   plt.imshow(arr)
- 
-  pprint(somebands + [const_id])
-  pprint(view_bands_and_ranges(const_id))
-  # pprint(meta['bands'])
 
+import os
+import time
+def save_image(aoi, const_id, somebands):
   mu_sec = datetime.datetime.time(datetime.datetime.now()).microsecond
   place_name = aoi['name'] # make sure Directory exists.
 
-  # name via somebands and const_id
   feature_name = ('_').join([const_id] + sorted(somebands))
-  savefig("./images/%s/%s%s" % (place_name, feature_name, mu_sec),
-          dpi=300, facecolor='k')#, transparent=True)
-          # orientation='portrait', papertype=None, format=None,
-          # transparent=False, bbox_inches=None, pad_inches=0.1,
-          # frameon=None, edgecolor='w')
+  pprint(feature_name)
 
-for i in range(4): print_available_bands()
+  filename = "./images/%s/%s%s.png" % (place_name, feature_name, mu_sec)
+  savefig(filename, dpi=300, facecolor='k')
+  time.sleep(3)
+  if os.stat(filename).st_size < 4*10**5: os.remove(filename)
+
+def print_available_bands(const_id='L8'):
+  somebands, feature_collection, const_id = get_randomized_bands(const_id) 
+  get_raster(somebands, const_id, feature_collection)
+  save_image(aoi, const_id, somebands)
+
+for i in range(1): print_available_bands()
 plt.show()

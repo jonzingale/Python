@@ -1,5 +1,3 @@
-# Let's start with importing all the toolboxes we
-# will need for both analysis and vizualization.
 from IPython.display import display, Image
 from descarteslabs.services import Places
 from descarteslabs.services import Metadata
@@ -11,137 +9,94 @@ from skimage.morphology import disk
 from pprint import pprint
 from pylab import *
 import descarteslabs as dl
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 from pdb import set_trace as st
-
-# First let's define the AOI as the county in which the Soberanes fire occurred
+from random import *
+import datetime
 
 # Find potential AOI matches
-# matches = dl.places.find('california_monterey') # silverton fire? ~7/1/2017
-matches = dl.places.find('new-mexico_taos')
-pprint(matches)
+# matches = dl.places.find('new-mexico_taos')
+# matches = dl.places.find('ohio_cuyahoga')
+matches = dl.places.find('texas_travis')
+# pprint(matches)
+
 # The first one looks good, so let's make that our area of interest.
 aoi = matches[0]
 shape = dl.places.shape(aoi['slug'], geom='low')
 
-# Check for imagery before the start date of July 22nd
+def get_bands():
+  bands = [them['const_id'] for them in dl.metadata.sources()]
+  return(bands)
 
-feature_collection = dl.metadata.search(const_id='L8', start_time='2016-07-22', end_time='2016-07-31',
-                                        limit=10, place=aoi['slug'])
-# As the variable name implies, this returns a FeatureCollection GeoJSON dictionary.
-# Its 'features' are the available scenes.
+def get_feature_collection(const_id, aoi):
+  # searches for imagery
+  rand_date = datetime.date(2012 + randint(0,4), randint(1,12), randint(1,28))
+  rand_start = rand_date.strftime('%Y-%m-%d')
+  rand_end = (rand_date + datetime.timedelta(days=14)).strftime('%Y-%m-%d')
 
-print(len(feature_collection['features']))
-# The 'id' associated with each feature is a unique identifier into our imagery database.
-# In this case there are 4 L8 scenes from adjoining WRS rows.
-print([f['id'] for f in feature_collection['features']])
+  feature_collection = dl.metadata.search(const_id=const_id,
+                                          start_time=rand_start,
+                                          end_time=rand_end,
+                                          limit=40, place=aoi['slug'])
+  return(feature_collection)
 
-# Now check for imagery in late October, i.e., towards the end of the fire
-feature_collection = dl.metadata.search(const_id='L8', start_time='2016-10-15', end_time='2016-10-31',
-                                        limit=10, place=aoi['slug'])
+def appropriate_ranges(band_names, const_id):
+  ranges, band_data = [], dl.raster.get_bands_by_constellation(const_id)
 
-print(len(feature_collection['features']))
-print([f['id'] for f in feature_collection['features']])
+  for band in band_names:
+    if band in band_data.keys():
+      ranges.append(band_data[band]['valid_range'])
+    else: ranges.append(None)#[0,1]) # default
+  return(ranges)
 
-def print_available_bands():
-  # Let's print out all the available bands we have for Landsat 8
-  L8_bands = dl.raster.get_bands_by_constellation("L8").keys()
-  print(L8_bands)
-  # Even though the 'bai' listed here stands for Burn Area Index, we need a normalized version of this index
-  # We get the NBR (normalized burn ratio) by using the swir2 and nir bands
+def get_randomized_bands(const_id):
+  len_bands_list, features = 0, []
+
+  while len_bands_list < 4 or not features:
+    bands = get_bands()
+    rando = randint(0, len(bands)-1)
+    const_id = bands[rando]
+    feature_collection = get_feature_collection(const_id, aoi)
+    features = feature_collection['features']
+    avail_bands = dl.raster.get_bands_by_constellation(const_id).keys()
+    len_bands_list = len(avail_bands)
+  bands_list = list(avail_bands)
+  shuffle(bands_list)
+  return([bands_list[:4], feature_collection])
+
+def print_available_bands(const_id='modis09'):
+  somebands, feature_collection = get_randomized_bands(const_id) 
+  scale_ranges = appropriate_ranges(somebands, const_id)
 
   # Collect the id's for each feature
-  ids = [f['id'] for f in feature_collection['features']]
+  ids = [f['id'] for f in feature_collection['features']] # ARBITRARILY LIMIT
+
   # Rasterize the features.
-  #  * Select red, green, blue, alpha
-  #  * Scale the incoming data with range [0, 10000] down to [0, 4000] (40% TOAR)
-  #  * Choose an output type of "Byte" (uint8)
-  #  * Choose 60m resolution
-  #  * Apply a cutline of Taos county
   arr, meta = dl.raster.ndarray(
       ids,
-      bands=['red', 'green', 'blue', 'alpha'],
-      scales=[[0,2048], [0, 2048], [0, 2048], None],
-      data_type='Byte',
-      resolution=60,
-      cutline=shape['geometry'],
+      bands=somebands,
+      scales=scale_ranges,
+      data_type='Byte', # Choose an output type of "Byte" (uint8)
+      resolution=60, # Choose 60m resolution
+      cutline=shape['geometry'], # Apply a cutline of Taos county
   )
 
-  # Note: A value of 1 in the alpha channel signifies where there is valid data.
-  # We use this throughout the majority of our imagery as a standard way of specifying
-  # valid or nodata regions. This is particularly helpful if a value of 0 in a particular
-  # band has meaning, rather than specifying a lack of data.
-
-  # We'll use matplotlib to make a quick plot of the image.
-  plt.figure(figsize=[10,10])
+  plt.figure(figsize=[10,10], facecolor='k')
   plt.axis('off')
   plt.imshow(arr)
-  plt.show()
+  pprint(somebands)
+  # pprint(meta['bands'])
 
-# Let's choose a different band combination to look at the fire scar
-# Rasterize the features.
-#  * Select swir2, nir, aerosol, alpha
-#  * Scale the incoming data with range [0, 10000] down to [0, 4000] (40% TOAR)
-#  * Choose an output type of "Byte" (uint8)
-#  * Choose 60m resolution for quicker vizualiation
-#  * Apply a cutline of Taos county
-def choose_different_band_combination(timewindow):
-  feature_collection = dl.metadata.search(const_id='L8',
-                                          start_time=timewindow[0],
-                                          end_time=timewindow[1],
-                                          limit=10, place=aoi['slug'])
-  # Collect the id's for each feature
-  ids = [f['id'] for f in feature_collection['features']]
+  mu_sec = datetime.datetime.time(datetime.datetime.now()).microsecond
+  place_name = aoi['name'] # make sure Directory exists.
 
-  arr, meta = dl.raster.ndarray(
-      ids,
-      bands=['swir2', 'nir', 'aerosol', 'alpha'],
-      scales=[[0,4000], [0, 4000], [0, 4000], None],
-      data_type='Byte',
-      resolution=60,
-      cutline=shape['geometry'],
-  )
-  # We'll use matplotlib to make a quick plot of the image.
-  plt.figure(figsize=[8,8])
-  plt.axis('off')
-  plt.imshow(arr)
-  plt.show()
+  savefig("./images/%s/random_%s%s" % (place_name, place_name, mu_sec),
+          dpi=300, facecolor='k')#, transparent=True)
+          # orientation='portrait', papertype=None, format=None,
+          # transparent=False, bbox_inches=None, pad_inches=0.1,
+          # frameon=None, edgecolor='w')
 
-# Now let's track activity in this AOI over 4 time windows
-# and look at the 4 false color images.
-def track_activity_over_four_windows():
-  times=[['2017-03-24','2017-03-30'], ['2017-03-09','2017-03-16'],
-         ['2017-03-17','2017-03-24'], ['2017-03-01','2017-03-08']]
-
-  axes = [[0,0],[0,1],[1,0],[1,1]]
-  fig, ax = plt.subplots(2,2,figsize=[5,4], dpi=300) # size of raster.
-  ax=ax.flatten()
-  for iax in ax.reshape(-1):
-      iax.get_xaxis().set_ticks([])
-      iax.get_yaxis().set_ticks([])
-
-  for i, timewindow in enumerate(times):
-      feature_collection = dl.metadata.search(const_id='L8', start_time=timewindow[0], end_time=timewindow[1],
-                                          limit=10, place=aoi['slug'])
-      ids = [f['id'] for f in feature_collection['features']]
-      arr, meta = dl.raster.ndarray(
-          ids,
-          bands=['swir2', 'nir', 'aerosol', 'alpha'],
-          scales=[[0,4000], [0, 4000], [0, 4000], None],
-          data_type='Byte',
-          resolution=60,
-          cutline=shape['geometry'],
-      )
-      #ax[axes[i][0], axes[i][1]].imshow(arr)
-      ax[i].imshow(arr)
-      ax[i].set_xlabel('%s' %timewindow[1] , fontsize=8)
-
-  fig.suptitle('Jemez Fire Progress', size=8)
-  fig.subplots_adjust(left=0.05, right=0.95, top=0.95, bottom=0.025, wspace=0.025, hspace=0.025)
-  plt.show()
-
-
-timewindow = ['2017-04-01','2017-04-21'] # 4/21/2017 last real date.
-choose_different_band_combination(timewindow)
+for i in range(25): print_available_bands()
+plt.show()

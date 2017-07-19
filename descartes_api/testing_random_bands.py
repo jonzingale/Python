@@ -20,18 +20,21 @@ import datetime
 # L7, L8 : LandSat Satellite
 # S2A: Sentinel 2A
 
-# Find potential AOI matches
+matches = dl.places.find('italy')
 # matches = dl.places.find('ireland')
-matches = dl.places.find('new-mexico_taos')
-# matches = dl.places.find('oregon_multnomah')
-# matches = dl.places.find('new-mexico_santa-fe')
-# matches = dl.places.find('ohio_cuyahoga')
-# matches = dl.places.find('texas_travis')
+# matches = dl.places.find('new-mexico_taos')
 if not matches: st()
 
 # The first one looks good, so let's make that our area of interest.
 aoi = matches[0]
 shape = dl.places.shape(aoi['slug'], geom='low')
+
+# tiles if land mass is too large.
+tiles = dl.raster.dltiles_from_shape(60.0, 2048, 16, shape)
+if len(tiles['features']) > 10:
+  shape = tiles['features'][randint(1,10)]
+
+pprint(shape)
 
 def get_bands():
   bands = [them['const_id'] for them in dl.metadata.sources()]
@@ -40,7 +43,7 @@ def get_bands():
 def get_feature_collection(const_id, aoi):
   rand_date = datetime.date(2016, randint(1,12), randint(1,28))
   rand_start = rand_date.strftime('%Y-%m-%d')
-  rand_end = (rand_date + datetime.timedelta(days=14)).strftime('%Y-%m-%d')
+  rand_end = (rand_date + datetime.timedelta(days=44)).strftime('%Y-%m-%d')
 
   feature_collection = dl.metadata.search(const_id=const_id,
                                           start_time=rand_start,
@@ -80,10 +83,11 @@ def get_randomized_bands(const_id):
   shuffle(bands_list)
   return([bands_list[:4], feature_collection, const_id])
 
-def get_raster(bands, const_id, feature_collection):
+def get_raster(bands, const_id, feature_collection, tiles):
   # Collect the id's for each feature
   ids = [f['id'] for f in feature_collection['features']]
   scales, physical_ranges = appropriate_ranges(bands, const_id)
+  shape = tiles['features'][randint(1,10)]
 
   # Rasterize the features.
   arr, meta = dl.raster.ndarray(
@@ -110,12 +114,12 @@ def save_image(aoi, const_id, somebands):
   filename = "./images/%s/%s%s.png" % (place_name, feature_name, mu_sec)
   savefig(filename, dpi=300, facecolor='k')
   time.sleep(3)
-  if os.stat(filename).st_size < 4*10**5: os.remove(filename)
+  if os.stat(filename).st_size < 1*10**5: os.remove(filename)
 
-def print_available_bands(const_id='L8'):
+def print_available_bands(tiles, const_id='L8'): #const_id='L8'
   somebands, feature_collection, const_id = get_randomized_bands(const_id) 
-  get_raster(somebands, const_id, feature_collection)
+  get_raster(somebands, const_id, feature_collection, tiles)
   save_image(aoi, const_id, somebands)
 
-for i in range(1): print_available_bands()
+for i in range(2): print_available_bands(tiles)
 plt.show()

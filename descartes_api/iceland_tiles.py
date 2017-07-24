@@ -19,7 +19,7 @@ location = dl.places.shape(place)
 geocoords = [-19.6271567, 63.6045345]
 
 def get_feature_collection(const_id, aoi):
-  rand_date = datetime.date(2016, randint(1,12), randint(1,28))
+  rand_date = datetime.date(2013 + randint(0, 3), randint(1,12), randint(1,28))
   rand_start = rand_date.strftime('%Y-%m-%d')
   rand_end = (rand_date + datetime.timedelta(days=30)).strftime('%Y-%m-%d')
   print(rand_start)

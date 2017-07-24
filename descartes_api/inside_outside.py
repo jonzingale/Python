@@ -15,83 +15,77 @@ from numpy import *
 # for the same bounding line on another tile. This observation
 # can not be relied upon.
 
-place = 'washington_snohomish'
-location = dl.places.shape(place)
-tiles = dl.raster.dltiles_from_shape(20, 2048, 16, location)
-regions = tiles['features']
+class inside_outside:
+  def __init__(self, point, a_pt, b_pt, c_pt):
+    endpoints = [array(pt) for pt in [a_pt, b_pt, c_pt]]
+    vv, ww = self._oriented_arrows(*endpoints)
+    self.inside = self.is_inside(array(point), vv, ww)
 
-coords = [] # get coords for all regions.
-for region in regions: # remove wrap-around coord
-  coords.append(region['geometry']['coordinates'][0][0:-1])
+  # counter_clockwise_segment.
+  def _orth(self, x, y): return(array([-y, x]))
 
-# counter_clockwise_segment.
-def orth(x, y): return(array([-y, x]))
+  # vectorize three coords: c1 --> c2 --> c3
+  def _oriented_arrows(self, c1, c2, c3): return(c2 - c1, c3 - c2)
 
-# vectorize three coords: c1 --> c2 --> c3
-def oriented_arrows(c1, c2, c3): return(c2 - c1, c3 - c2)
+  # positive when in the region. 
+  def is_inside(self, pt, e1, e2):
+    cond = pt.dot(self._orth(*e1)) > 0 and pt.dot(self._orth(*e2)) > 0
+    return(cond)
 
-# positive when in the region. 
-def is_inside(pt, e1, e2):
-  cond = pt.dot(orth(*e1)) > 0 and pt.dot(orth(*e2)) > 0
-  return(cond)
+class pointed_region(inside_outside):
+  def __init__(self, point, place):
+    location = dl.places.shape(place)
+    tiles = dl.raster.dltiles_from_shape(20, 2048, 16, location)
+    self.regions = tiles['features']
 
-# Test 1
-def test1():
-  # is able to determine inside or outside for random coords and pts.
-  rando = randint(1, len(coords)) - 1
-  p, q, r, *ss = [array(vect) for vect in coords[rando]]
-  vv, ww = oriented_arrows(p, q, r)
-  pt_between = array((p+r)/2)
+    self.point = point
+    self.coords = self.all_coords()
+    self.closest_vertex = self.closest_vertex(point)
 
-  inside = is_inside(pt_between, vv, ww) == True
-  outside = is_inside(vv, pt_between, ww) == False
-  print([inside, outside])
+  def all_coords(self):
+    coords = [] # get coords for all regions.
+    for region in self.regions: # remove wrap-around coord
+      coords.append(region['geometry']['coordinates'][0][0:-1])
+    return(coords)
 
-test1()
+  # euclidean distance
+  def _dist(self, pt, qt): return(pdist([pt, qt]))
 
-# Test 2
-russ = array([47.8496568,-121.9752158])
+  def _flatten(self, lst):
+    flat_list = []
+    for elem in lst: flat_list += elem 
+    return(flat_list)
 
-def euclidean_dist(pt, qt): return(pdist([pt, qt]))
+  def closest_vertex(self, pt):
+    f_coords = self._flatten(self.coords)
+    pairs = [(cc, self._dist(array(pt), cc)) for cc in f_coords]
+    return(min(pairs)[0])
 
-def flatten(lst):
-  flat_list = []
-  for elem in lst: flat_list += elem 
-  return(flat_list)
+  def _possible_same_vertices(self):
+    f_coords = self._flatten(self.coords)
+    vert = self.closest_vertex
+    close = [cc for cc in f_coords if self._dist(vert, cc) < 0.5]
+    return(close)
 
-def closest_vertex(pt):
-  f_coords = flatten(coords)
-  pairs = [(cc, euclidean_dist(russ, cc)) for cc in f_coords]
-  return(min(pairs)[0])
+  def _find_relevant_verts(self, vert):
+    cc = next(coord for coord in self.coords if vert in coord)
 
-def possible_same_vertices(vert):
-  f_coords = flatten(coords)
-  # for cc in f_coords: print(euclidean_dist(vert, cc))  
-  close = [cc for cc in f_coords if euclidean_dist(vert, cc) < 0.5]
-  return(close)
+    v_dex = cc.index(vert)
+    verts = [cc[v_dex - i - 1 % len(cc)] for i in range(3)]
+    return(verts)
 
-def find_relevant_verts(vert):
-  cc = next(coord for coord in coords if vert in coord)
+  def _get_region_from_coords(self, coords):
+    for region in self.regions:
+      r_coords = region['geometry']['coordinates'][0]
+      if coords in r_coords: return(region)
 
-  v_dex = cc.index(vert)
-  verts = [cc[v_dex - i - 1 % len(cc)] for i in range(3)]
-  return([array(vert) for vert in verts])
+  def possible_regions(self):
+    possible_verts = self._possible_same_vertices()
 
-def get_region_from_coords(coords):
-  for region in regions:
-    r_coords = region['geometry']['coordinates'][0]
-    if coords in r_coords: return(region)
+    for p_vert in possible_verts:
+      verts = self._find_relevant_verts(p_vert)
+      io = inside_outside(self.point, *verts)
 
-def test2():
-  # Calculates correct region from vertex closest to russ's house.
-  best_vertex = closest_vertex(russ)
-  possible_verts = possible_same_vertices(best_vertex)
-
-  for p_vert in possible_verts:
-    verts = find_relevant_verts(p_vert)
-    vv, ww = oriented_arrows(*verts)
-    if is_inside(russ, vv, ww):
-      region = get_region_from_coords(list(verts[0]))
-      print("\n%s\n" % region)
-
-test2()
+      if io.inside:
+        region = self._get_region_from_coords(list(verts[0]))
+        return(region)

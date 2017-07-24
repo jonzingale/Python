@@ -8,11 +8,13 @@ import datetime
 import time
 import os
 
+from inside_outside import pointed_region
+
 def get_feature_collection(const_id, aoi):
-  rand_date = datetime.date(2016, randint(8,9), randint(1,28)) # May - August
-  # rand_date = datetime.date(2016, 3, 10)
+  # rand_date = datetime.date(2016, randint(8,9), randint(1,28)) # May - August
+  rand_date = datetime.date(2013, 6, 3)
   rand_start = rand_date.strftime('%Y-%m-%d')
-  rand_end = (rand_date + datetime.timedelta(days=30)).strftime('%Y-%m-%d')
+  rand_end = (rand_date + datetime.timedelta(days=10)).strftime('%Y-%m-%d')
   print(rand_start)
 
   feature_collection = dl.metadata.search(const_id=const_id,
@@ -21,7 +23,7 @@ def get_feature_collection(const_id, aoi):
                                           limit=10, place=aoi['slug'])
   return(feature_collection)
 
-def save_image(aoi):
+def save_image(aoi, tile):
   mu_sec = datetime.datetime.time(datetime.datetime.now()).microsecond
 
   # Check that directory exists. If not, make it.
@@ -29,7 +31,10 @@ def save_image(aoi):
   dir_cond = os.path.isdir(dir_name)
   if not dir_cond: os.mkdir(dir_name)
 
-  filename = "./images/%s/%s.png" % (aoi['name'], mu_sec)
+  fst_coords = tile['geometry']['coordinates'][0][0]
+  coord_name = ('_').join([str(it) for it in fst_coords])
+
+  filename = "./images/%s/%s.png" % (aoi['name'], coord_name)
   savefig(filename, dpi=300, facecolor='k')
   time.sleep(3)
   if os.stat(filename).st_size < 1*10**6: os.remove(filename)
@@ -37,7 +42,7 @@ def save_image(aoi):
 # Find potential AOI matches
 # place = 'new-mexico_santa-fe'
 # place = 'cuba'
-place = 'washington_snohomish'
+place = 'new-mexico_sandoval'
 matches = dl.places.find(place)
 if not matches: st()
 aoi = matches[0]
@@ -55,7 +60,20 @@ shuffle(tiles['features'])
 
 # russ = (47.8496568,-121.9752158)
 pprint(len(tiles['features']))
-for tile in tiles['features'][:10]:
+
+# fire_coords3 = ['-106.7709367384569, 35.77031597485538']
+# fire_coords1 = [-106.33291249604501, 35.772363328866696]
+# fire_coords2 = [-106.99641235353315, 35.76317763618165]
+# fire_coords = [fire_coords1, fire_coords2]
+
+# fire_tiles = []
+# for coord in fire_coords:
+#   region = pointed_region(coord, place).possible_regions()
+#   if region: fire_tiles.append(region)
+
+# for tile in fire_tiles:
+
+for tile in tiles['features']:
 
   ids = [f['id'] for f in feature_collection['features']]
   # st()
@@ -77,5 +95,5 @@ for tile in tiles['features'][:10]:
   plt.figure(figsize=[7,7], facecolor='k')
   plt.axis('off')
   plt.imshow(arr)
-  save_image(aoi)
+  save_image(aoi, tile)
 plt.show()

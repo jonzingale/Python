@@ -9,9 +9,11 @@ import time
 import os
 
 def get_feature_collection(const_id, aoi):
-  rand_date = datetime.date(2016, randint(6,8), randint(1,28)) # june - august
+  rand_date = datetime.date(2016, randint(8,9), randint(1,28)) # May - August
+  # rand_date = datetime.date(2016, 3, 10)
   rand_start = rand_date.strftime('%Y-%m-%d')
-  rand_end = (rand_date + datetime.timedelta(days=14)).strftime('%Y-%m-%d')
+  rand_end = (rand_date + datetime.timedelta(days=30)).strftime('%Y-%m-%d')
+  print(rand_start)
 
   feature_collection = dl.metadata.search(const_id=const_id,
                                           start_time=rand_start,
@@ -22,32 +24,54 @@ def get_feature_collection(const_id, aoi):
 def save_image(aoi):
   mu_sec = datetime.datetime.time(datetime.datetime.now()).microsecond
 
-  filename = "./images/%s/%s.png" % (aoi, mu_sec)
+  # Check that directory exists. If not, make it.
+  dir_name = "./images/%s" % aoi['name']
+  dir_cond = os.path.isdir(dir_name)
+  if not dir_cond: os.mkdir(dir_name)
+
+  filename = "./images/%s/%s.png" % (aoi['name'], mu_sec)
   savefig(filename, dpi=300, facecolor='k')
-  time.sleep(2)
-  if os.stat(filename).st_size < 2*10**6: os.remove(filename)
+  time.sleep(3)
+  if os.stat(filename).st_size < 1*10**6: os.remove(filename)
 
 # Find potential AOI matches
-aoi = 'hungary'
-matches = dl.places.find(aoi)
-iceland = dl.places.shape(aoi)
+# place = 'new-mexico_santa-fe'
+# place = 'cuba'
+place = 'washington_snohomish'
+matches = dl.places.find(place)
+if not matches: st()
+aoi = matches[0]
+location = dl.places.shape(place)
 
 # resolution, tilesize, pad
-tiles = dl.raster.dltiles_from_shape(60.0, 2048, 16, iceland)
-# iceland_tiles = [38, 31, 23, 18, 17, 16, 12, 10, 3, 2]
-# tile = tiles['features'][38]
+tiles = dl.raster.dltiles_from_shape(5, 4000, 16, location) # 2048
 
-feature_collection = get_feature_collection('L8', matches[0])
+# make sure we have features.
+feature_collection = get_feature_collection('L8SR', aoi)
+while not feature_collection['features']:
+  feature_collection = get_feature_collection('L8SR', aoi)
 
+shuffle(tiles['features'])
+
+# russ = (47.8496568,-121.9752158)
+pprint(len(tiles['features']))
 for tile in tiles['features'][:10]:
-  ids = [f['id'] for f in feature_collection['features']]
 
+  ids = [f['id'] for f in feature_collection['features']]
+  # st()
+# ('L8SR', ['red', 'green', 'blue', 'cloud', 'bright',
+# 'qa_snow', 'qa_water', 'qa_cirrus', 'qa_cloud', 'nir',
+# 'swir1', 'swir2', 'aerosol', 'cirrus', 'thermal', 'sr_cirrus',
+# 'sr_cloud', 'sr_adjacent_cloud', 'sr_cloud_shadow', 'sr_water',
+# 'aerosol_level', 'ipflags_enum', 'alpha', 'evi', 'visual_cloud_mask',
+# 'rsqrt', 'ndwi2', 'ndwi1', 'ndvi', 'ndwi', 'bai']), 
   arr, meta = dl.raster.ndarray(
       ids,
-      bands=['red','green','blue','alpha'],
-      scales=[[0,4000],[0,4000],[0,4000],None],
+      # keep frequencies low to high?
+      bands=['swir2','swir1','red','bai'],
+      scales=[[0,4000],[0,4000],[0,4000],[0, 65535]],
       data_type='Byte',# Float32' 'Float64' 'Byte'
-      resolution=60,
+      resolution=5,
       cutline=tile['geometry'],
   )
   plt.figure(figsize=[7,7], facecolor='k')

@@ -19,7 +19,7 @@ location = dl.places.shape(place)
 fire_coords1 = [-106.4479236, 35.8457509]
 
 def get_feature_collection(const_id, aoi):
-  rand_date = datetime.date(2013, 6, 4 + randint(1, 10))
+  rand_date = datetime.date(2013, 6, 4 + randint(1, 14))
   rand_start = rand_date.strftime('%Y-%m-%d')
   rand_end = (rand_date + datetime.timedelta(days=5)).strftime('%Y-%m-%d')
   print(rand_start)
@@ -38,8 +38,8 @@ def save_image(aoi, tile, rand_start):
   dir_cond = os.path.isdir(dir_name)
   if not dir_cond: os.mkdir(dir_name)
   
-  filename = "./images/%s/jemez_fire/%s%s.png" % (aoi['name'], rand_start, mu_sec)
-  savefig(filename, dpi=300, facecolor='k')
+  filename = "./images/%s/jemez_fire/%s_%s.png" % (aoi['name'], rand_start, mu_sec)
+  savefig(filename, dpi=500, facecolor='k')
   time.sleep(2)
   if os.stat(filename).st_size < 1*10**6: os.remove(filename)
 
@@ -49,7 +49,7 @@ def get_images():
   while not feature_collection['features']:
     feature_collection, rand_start = get_feature_collection('L8SR', aoi)
 
-  pr = pointed_region(fire_coords1, place, 5, 4000)
+  pr = pointed_region(fire_coords1, place, 5, 5000)
   tiles = pr.possible_regions()
 
   print(len(tiles))
@@ -70,5 +70,5 @@ def get_images():
     plt.imshow(arr)
     save_image(aoi, tile, rand_start)
 
-for i in range(15): get_images()
+for i in range(5): get_images()
 plt.show()

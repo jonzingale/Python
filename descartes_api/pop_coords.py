@@ -32,8 +32,8 @@ def get_feature_collection(const_id, aoi):
 
 def save_image(aoi, tile, rand_start):
   mu_sec = datetime.datetime.time(datetime.datetime.now()).microsecond
-  filename = "./images/%s/pop/%s.png" % (aoi['name'], rand_start)
-  savefig(filename, dpi=300, facecolor='k')
+  filename = "./images/%s/pop/%s_%s.png" % (aoi['name'], rand_start, mu_sec)
+  savefig(filename, dpi=500, facecolor='k')
   time.sleep(2)
   if os.stat(filename).st_size < 1*10**6: os.remove(filename)
 
@@ -57,10 +57,10 @@ def get_images():
         resolution=5,
         cutline=tile['geometry'],
     )
-    plt.figure(figsize=[20,20], facecolor='k')
+    plt.figure(figsize=[7,7], facecolor='k') # does not affect save.
     plt.axis('off')
     plt.imshow(arr)
     save_image(aoi, tile, rand_start)
 
-for i in range(1): get_images()
+for i in range(5): get_images()
 plt.show()

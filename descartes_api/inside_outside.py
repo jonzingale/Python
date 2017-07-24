@@ -21,7 +21,7 @@ tiles = dl.raster.dltiles_from_shape(20, 2048, 16, location)
 regions = tiles['features']
 
 coords = [] # get coords for all regions.
-for region in regions: # remove last coord
+for region in regions: # remove wrap-around coord
   coords.append(region['geometry']['coordinates'][0][0:-1])
 
 # counter_clockwise_segment.

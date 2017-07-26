@@ -29,14 +29,15 @@ name, *geocoords = ['Brazil', -23.7329092, -46.4427626]
 # name, *geocoords = ['russia',65.8995174,44.1387822]
 # name, *geocoords = ['russia',67.226336,50.6803122]
 # name, *geocoords = ['russia',68.172482,53.8014399]
-# name, *geocoords = ['japan',35.6555412,139.7870809]
-# name, *geocoords = ['japan',37.8151405,139.2987771]
+# name, *geocoords = ['japan',36.7975629,138.7505393] # labyrinth festival
+# name, *geocoords = ['iceland',65.6713177,-16.8587428] # Hverarönd boiling mud
 
 def get_avail_bands(const_id='L8SR'):
    pprint(dl.raster.get_bands_by_constellation(const_id))
 
 def get_feature_collection(const_id, tile):
   rand_date = datetime.date(2014 + randint(0,2), randint(4,9), randint(1,29))
+
   rand_start = rand_date.strftime('%Y-%m-%d')
   rand_end = (rand_date + datetime.timedelta(days=10)).strftime('%Y-%m-%d')
   print(rand_start)
@@ -49,7 +50,7 @@ def get_feature_collection(const_id, tile):
 
   return(feature_collection, rand_start)
 
-def save_image(tile, rand_start):
+def save_image(tile, rand_start, size=4096):
   mu_sec = datetime.datetime.time(datetime.datetime.now()).microsecond
 
   # Check that directory exists. If not, make it.
@@ -64,7 +65,8 @@ def save_image(tile, rand_start):
 
 def get_images():
   resolution = 5
-  tile = dl.raster.dltile_from_latlon(*geocoords, resolution, 2**12, 16)
+  size = 2**12 # max so far?
+  tile = dl.raster.dltile_from_latlon(*geocoords, resolution, size, 16)
   tiles = [tile]
 
   # make sure we have features.
@@ -77,7 +79,7 @@ def get_images():
 
     arr, meta = dl.raster.ndarray(
         ids,
-        bands=['swir2', 'swir1', 'red', 'bai'],
+        bands=['swir2', 'swir1', 'red', 'bai'], #nir
         scales=[[0,4000],[0,4000],[0,4000],[0, 65535]],
         data_type='Byte',
         resolution=resolution,
@@ -86,7 +88,7 @@ def get_images():
     plt.figure(figsize=[7,7], facecolor='k')
     plt.axis('off')
     plt.imshow(arr)
-    save_image(tile, rand_start)
+    save_image(tile, rand_start, size)
 
-for i in range(15): get_images()
-plt.show()
+for i in range(10): get_images()
+# plt.show()

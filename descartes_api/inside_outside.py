@@ -7,6 +7,8 @@
 import descarteslabs as dl
 from scipy.spatial.distance import pdist
 from numpy import *
+
+from pdb import set_trace as st
 # Ack: tile geocoords do not match precisely.
 # one would figure that if a given vertex is the endpoint
 # for a bounding line of one tile it must be the an endpoint
@@ -81,6 +83,13 @@ class pointed_region(inside_outside):
       r_coords = region['geometry']['coordinates'][0]
       if coords in r_coords: return(region)
 
+  def uniqify_list(self, ls):
+    uniques = []
+    for l in ls:
+      if l not in uniques:
+        uniques.append(l)
+    return(uniques)
+
   def possible_regions(self):
     possible_verts = self.closest_vertices
     possible_regions = []
@@ -93,4 +102,6 @@ class pointed_region(inside_outside):
         region = self._get_region_from_coords(list(verts[1])) # middle vertex
         possible_regions.append(region)
 
-    return(possible_regions)
+    # unique list of regions.
+    uniq_regions = self.uniqify_list(possible_regions)
+    return(uniq_regions)

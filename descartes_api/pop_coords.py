@@ -10,11 +10,10 @@ import os
 
 from inside_outside import pointed_region
 
-# Find potential AOI matches
+# This code gets close to places around Lakewood.
+
 place = 'ohio_cuyahoga'
-matches = dl.places.find(place)
-if not matches: st()
-aoi = matches[0]
+aoi = dl.places.find(place)[0]
 location = dl.places.shape(place)
 pop = [-81.8183898, 41.4907088]
 

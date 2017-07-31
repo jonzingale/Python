@@ -8,16 +8,18 @@ LOCATION_REGEX = 'Check Card: |SQ \*|  (\d{2}\/?)+Card \d+ #\d+|Card \d+ #\d+'
 
 class bank:
   def __init__(self):
-    self.get_data()
-    self.spent_per_week()
-    self.spent_per_day()
+    self.rows = self.get_data()
+    self.weekly_spent = self.spent_per_week()
+    self.daily_spent = self.spent_per_day()
+    self.weekly_balance = self.balance_per_week()
+    self.daily_balance = self.balance_per_day()
 
   def string_to_date(self, date_str):
     month, day, year = map(lambda x: int(x), date_str.split('/'))
     return(dt.date(year, month, day))
 
   def get_data(self):
-    self.rows = []
+    rows = []
     with open(FILENAME) as csvfile:
       banking = csv.reader(csvfile, delimiter=',')
       for row in banking:
@@ -27,7 +29,8 @@ class bank:
         balance = float(re.sub('\$','',row[3])) 
 
         clean_row = [date, location, debit, balance]
-        self.rows.append(clean_row)
+        rows.append(clean_row)
+    return(rows)
 
   def rows_for_dates(self, start_date, end_date):
     delta = start_date - end_date
@@ -39,30 +42,62 @@ class bank:
   def spent_between_dates(self, start_date, end_date):
     dates = self.rows_for_dates(start_date, end_date)
     total = 0
+
     for row in self.rows:
       if row[0] in dates and row[2] < 0 and not self.likely_rent(row):
         total += row[2]
-    return([row, round(total,2)])
+    return(round(total,2))
+
+  # average balance between days.
+  def balance_between_dates(self, start_date, end_date):
+    dates = self.rows_for_dates(start_date, end_date)
+    total, row_count = 0, 0
+
+    for row in self.rows:
+      if row[0] in dates:
+        row_count += 1
+        total += row[3]
+    return(round(total/row_count, 2))
 
   def likely_rent(self, row):
     if re.search('Guadalupe CU|CU ANYTIME|Century Bank', row[1]): return(True) 
 
+  def balance_per_day(self):
+    daily_balance = []
+    for row in self.rows:
+      daily_balance.append((row[0], row[3]))
+    return(daily_balance)
+
+  def balance_per_week(self):
+    inc_date = self.rows[0][0]
+    furthest_date = self.rows[-1][0]
+
+    weekly_balance = []
+    while (inc_date - furthest_date).days > 7:
+      end_date = inc_date - dt.timedelta(days=7)
+      balance = self.balance_between_dates(inc_date, end_date)
+      weekly_balance.append((inc_date, balance))
+      inc_date = end_date
+    return(weekly_balance)
+
   def spent_per_day(self):
-    self.daily_spent = []
+    daily_spent = []
     for row in self.rows:
       if row[2] < 0 and not self.likely_rent(row):
-        self.daily_spent.append((row[0], row[2]))
+        daily_spent.append((row[0], row[2]))
+    return(daily_spent)
 
   def spent_per_week(self):
     inc_date = self.rows[0][0]
     furthest_date = self.rows[-1][0]
 
-    self.weekly_spent = []
+    weekly_spent = []
     while (inc_date - furthest_date).days > 7:
       end_date = inc_date - dt.timedelta(days=7)
-      row, spent = self.spent_between_dates(inc_date, end_date)
-      self.weekly_spent.append((inc_date, spent))
+      spent = self.spent_between_dates(inc_date, end_date)
+      weekly_spent.append((inc_date, spent))
       inc_date = end_date
+    return(weekly_spent)
 
   def pp_weekly_spent(self):
     for pair in self.spent:

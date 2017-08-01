@@ -3,7 +3,7 @@ import datetime as dt
 import csv
 import re
 
-FILENAME = './../../banking/one_year.csv'
+FILENAME = './../../../banking/one_year.csv'
 LOCATION_REGEX = 'Check Card: |SQ \*|  (\d{2}\/?)+Card \d+ #\d+|Card \d+ #\d+'
 
 class bank:

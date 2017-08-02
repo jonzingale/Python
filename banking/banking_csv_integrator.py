@@ -1,14 +1,10 @@
+# Parse new bank csvs and merge with historical.
 from pdb import set_trace as st
 from itertools import *
 import datetime as dt
 import csv
 import re
-
-import banking
 import os
-
-# the idea here is to structure incoming csvs
-# to match the format of the master csv.
 
 HISTORICAL_CSV = './../../../banking/one_year.csv'
 NEW_CSV_PATH = './../../../banking/'
@@ -57,6 +53,6 @@ class bank_csv:
       rows = [row for row in banking]
     return(rows)
 
-it = bank_csv()
+bank_csv()
 
 

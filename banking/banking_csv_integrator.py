@@ -10,15 +10,9 @@ import os
 # the idea here is to structure incoming csvs
 # to match the format of the master csv.
 
-# Is there a good way to merge the two csvs
-# without converting to an array first?
-# bash would likely be straightforward.
-
 HISTORICAL_CSV = './../../../banking/one_year.csv'
 NEW_CSV_PATH = './../../../banking/'
 CSV_REGEX = 'History-(\d+)-\d+'
-
-# TODO: save updated csv to new file.
 
 class bank_csv:
   def __init__(self):
@@ -52,6 +46,11 @@ class bank_csv:
       recents = takewhile(lambda x: self.string_to_date(x[0]) > self.last_date, rows)
       self.rows = list(recents) + self.rows
 
+      # save the merged files.
+      with open(HISTORICAL_CSV, 'w') as csvfile:
+          writer = csv.writer(csvfile)
+          writer.writerows(self.rows)
+
   def get_data(self):
     with open(HISTORICAL_CSV) as csvfile:
       banking = csv.reader(csvfile, delimiter=',')
@@ -59,5 +58,5 @@ class bank_csv:
     return(rows)
 
 it = bank_csv()
-merged = it.rows
-st()
+
+

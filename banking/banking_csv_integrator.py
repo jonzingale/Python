@@ -1,12 +1,15 @@
 # Parse new bank csvs and merge with historical.
 from pdb import set_trace as st
+from os.path import expanduser
 from itertools import *
 import datetime as dt
 import csv
 import re
 import os
 
-HISTORICAL_CSV = './../../../banking/one_year.csv'
+home = expanduser("~")
+
+HISTORICAL_CSV = '%s/Desktop/banking/one_year.csv' % home
 NEW_CSV_PATH = './../../../banking/'
 CSV_REGEX = 'History-(\d+)-\d+'
 
@@ -54,5 +57,3 @@ class bank_csv:
     return(rows)
 
 bank_csv()
-
-

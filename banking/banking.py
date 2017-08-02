@@ -1,9 +1,12 @@
 from pdb import set_trace as st
+from os.path import expanduser
 import datetime as dt
 import csv
 import re
 
-FILENAME = './../../../banking/one_year.csv'
+home = expanduser("~")
+
+FILENAME = '%s/Desktop/banking/one_year.csv' % home
 LOCATION_REGEX = 'Check Card: |SQ \*|  (\d{2}\/?)+Card \d+ #\d+|Card \d+ #\d+'
 
 class bank:

@@ -29,19 +29,19 @@ from inside_outside import pointed_region
 # name, *geocoords = ['russia',65.8995174,44.1387822]
 # name, *geocoords = ['Budapest',47.4811282,18.9902215]
 # name, *geocoords = ['Budapest',47.6900869,19.076262] # szentendrei
-name, *geocoords = ['Budapest',46.955091,17.8995783]  # lake belaton, hotel annabella
+# name, *geocoords = ['Budapest',46.955091,17.8995783]  # lake belaton, hotel annabella
 # name, *geocoords = ['russia',68.172482,53.8014399]
 # name, *geocoords = ['japan',36.7975629,138.7505393] # labyrinth festival
 # name, *geocoords = ['iceland',65.6713177,-16.8587428] # Hverarönd boiling mud
 # name, *geocoords = ['Finland',60.2067757,25.0429881] # helsinki
-# name, *geocoords = ['Amazon', -2.2473374, -55.1659967]
+name, *geocoords = ['Hefei',31.9017649,117.1965916]# 31.7804709,117.3133614]
 
 def get_avail_bands(const_id='L8SR'):
    pprint(dl.raster.get_bands_by_constellation(const_id))
 
 def get_feature_collection(const_id, tile):
-  # rand_date = datetime.date(2014 + randint(0,2), randint(6,8), randint(1,29))
-  rand_date = datetime.date(2014,8,13)
+  rand_date = datetime.date(2014 + randint(0,2), randint(7,9), randint(1,29))
+  # rand_date = datetime.date(2014,8,13)
 
   rand_start = rand_date.strftime('%Y-%m-%d')
   rand_end = (rand_date + datetime.timedelta(days=10)).strftime('%Y-%m-%d')
@@ -95,5 +95,5 @@ def get_images():
     plt.imshow(arr)
     save_image(tile, rand_start, size, resolution)
 
-for i in range(13): get_images()
+for i in range(5): get_images()
 # plt.show()

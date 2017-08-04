@@ -38,8 +38,7 @@ def banking_chart(date_type, data_type_str, time_scale_str, bias=0, subplot=111)
   plt.xlabel(time_scale_str)
   plt.ylabel(data_type_str)
 
-# Todo: make all daily, and use slice [::] to scale.
-# banking_chart(bb.daily_spent, 'Spent', 'Days', 0)
+# banking_chart(bb.daily_spent, 'Spent', 'Days', 0, 121)
 banking_chart(bb.weekly_spent, 'Spent', 'Weeks', 0, 121)
 banking_chart(bb.weekly_balance, 'Balance', 'Weeks', 1, 122)
 

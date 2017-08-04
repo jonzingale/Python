@@ -17,7 +17,7 @@ class bank_csv:
     self.rows = self.get_data()
     self.last_date = self.string_to_date(self.rows[0][0])
     self.newest_csv = self.most_recent_csv()
-    self.merge_new_into_old()
+    if self.newest_csv: self.merge_new_into_old()
 
   def string_to_date(self, date_str):
     month, day, year = map(lambda x: int(x), date_str.split('/'))

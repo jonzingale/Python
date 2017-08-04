@@ -7,9 +7,8 @@ import csv
 import re
 import os
 
-home = expanduser("~")
-
-HISTORICAL_CSV = '%s/Desktop/banking/one_year.csv' % home
+HOME = expanduser("~")
+HISTORICAL_CSV = '%s/Desktop/banking/one_year.csv' % HOME
 NEW_CSV_PATH = './../../../banking/'
 CSV_REGEX = 'History-(\d+)-\d+'
 

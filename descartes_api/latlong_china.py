@@ -34,14 +34,16 @@ from inside_outside import pointed_region
 # name, *geocoords = ['japan',36.7975629,138.7505393] # labyrinth festival
 # name, *geocoords = ['iceland',65.6713177,-16.8587428] # Hverarönd boiling mud
 # name, *geocoords = ['Finland',60.2067757,25.0429881] # helsinki
-name, *geocoords = ['Hefei',31.9017649,117.1965916]# 31.7804709,117.3133614]
+# name, *geocoords = ['Hefei',31.9017649,117.1965916]# 31.7804709,117.3133614
+# name, *geocoords = ['Austin',30.2974275,-97.7327545]
+name, *geocoords = ['Bali',-8.4330015,115.2793008] # rice fields
 
 def get_avail_bands(const_id='L8SR'):
    pprint(dl.raster.get_bands_by_constellation(const_id))
 
 def get_feature_collection(const_id, tile):
-  rand_date = datetime.date(2014 + randint(0,2), randint(7,9), randint(1,29))
-  # rand_date = datetime.date(2014,8,13)
+  rand_date = datetime.date(2015, randint(1,12), randint(1,29))
+  # rand_date = datetime.date(2015,5,26)
 
   rand_start = rand_date.strftime('%Y-%m-%d')
   rand_end = (rand_date + datetime.timedelta(days=10)).strftime('%Y-%m-%d')
@@ -69,7 +71,7 @@ def save_image(tile, rand_start, size=4096, resolution=0):
   if os.stat(filename).st_size < 1*10**6: os.remove(filename)
 
 def get_images():
-  resolution = 10
+  resolution = 5
   size = 2**12 # max so far?
   tile = dl.raster.dltile_from_latlon(*geocoords, resolution, size, 16)
   tiles = [tile]
@@ -95,5 +97,5 @@ def get_images():
     plt.imshow(arr)
     save_image(tile, rand_start, size, resolution)
 
-for i in range(5): get_images()
+for i in range(25): get_images()
 # plt.show()

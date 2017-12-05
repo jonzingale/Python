@@ -41,11 +41,17 @@ def klPrimes(a, b):
 	aa = witnessTo(a)
 	bb = witnessTo(b)
 	aNorm, bNorm = normalize(aa, bb)
-	sig = entropy(aNorm, bNorm)
-	return(sig)
 
+	wass = wasserstein_distance(aNorm, bNorm)
+	energy = energy_distance(aNorm, bNorm)
+	kl = entropy(aNorm, bNorm)
+	return([wass, energy, kl])
+
+print(['wasserstein_distance','energy_distance','kullback-leibler'])
 print(klPrimes(3, 167))
 print(klPrimes(3, 17))
 print(klPrimes(30, 17))
+
+
 
 # st()

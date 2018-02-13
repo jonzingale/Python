@@ -19,8 +19,8 @@ location = dl.places.shape(place)
 fire_coords1 = [-106.4479236, 35.8457509]
 
 def get_feature_collection(const_id, aoi):
-  rand_date = datetime.date(2010 + randint(1, 7), 7, 1 + randint(1, 28)) # Los Conchas
-  # rand_date = datetime.date(2013, 6, 4 + randint(1, 14))
+  # rand_date = datetime.date(2011, 6, 26 + randint(1, 4)) # Los Conchas, though no images.
+  rand_date = datetime.date(2013, 6, 4 + randint(1, 14))
 
   rand_start = rand_date.strftime('%Y-%m-%d')
   rand_end = (rand_date + datetime.timedelta(days=15)).strftime('%Y-%m-%d')

@@ -1,6 +1,6 @@
 from IPython.display import display, Image
-from descarteslabs.services import Places
-from descarteslabs.services import Metadata
+# from descarteslabs.services import Places
+# from descarteslabs.services import Metadata
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from copy import deepcopy
 from skimage import measure

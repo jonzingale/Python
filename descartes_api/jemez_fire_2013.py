@@ -19,10 +19,12 @@ location = dl.places.shape(place)
 fire_coords1 = [-106.4479236, 35.8457509]
 
 def get_feature_collection(const_id, aoi):
-  rand_date = datetime.date(2013, 6, 4 + randint(1, 14))
+  rand_date = datetime.date(2010 + randint(1, 7), 7, 1 + randint(1, 28)) # Los Conchas
+  # rand_date = datetime.date(2013, 6, 4 + randint(1, 14))
+
   rand_start = rand_date.strftime('%Y-%m-%d')
-  rand_end = (rand_date + datetime.timedelta(days=5)).strftime('%Y-%m-%d')
-  print(rand_start)
+  rand_end = (rand_date + datetime.timedelta(days=15)).strftime('%Y-%m-%d')
+  print([rand_start, rand_end])
 
   feature_collection = dl.metadata.search(const_id=const_id,
                                           start_time=rand_start,
@@ -44,10 +46,11 @@ def save_image(aoi, tile, rand_start):
   if os.stat(filename).st_size < 1*10**6: os.remove(filename)
 
 def get_images():
-  # make sure we have features.
-  feature_collection, rand_start = get_feature_collection('L8SR', aoi)
+  # make sure we have features. WILL STAY IN LOOP FOREVER.
+  satellite = 'L8' #'L8SR'
+  feature_collection, rand_start = get_feature_collection(satellite, aoi) 
   while not feature_collection['features']:
-    feature_collection, rand_start = get_feature_collection('L8SR', aoi)
+    feature_collection, rand_start = get_feature_collection(satellite, aoi)
 
   pr = pointed_region(fire_coords1, place, 5, 5000)
   tiles = pr.possible_regions()

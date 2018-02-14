@@ -3,6 +3,14 @@
 
 from pdb import set_trace
 
+
+# TODO:
+# import Springrank functionality.
+# write CSV importer for springRank.
+#   - csv to springRank functionality.
+# import scipy or numpy stats functionality.
+
+
 # recursive HH
 def havelhakimi(xs):
   if len(xs) == 1:
@@ -27,12 +35,6 @@ class Blinky(): # THIS IS HERE FOR REFERENCE.
     self.state = []
     for i in range(150): # set number of columns.
       self.state.append(randint(0,1))
-
-
-# TODO:
-# import Springrank functionality.
-# write CSV importer for springRank.
-#   - csv to springRank functionality
 
 
 # set_trace()

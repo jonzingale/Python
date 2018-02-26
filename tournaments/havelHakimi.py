@@ -9,7 +9,8 @@ from pdb import set_trace
 # write CSV importer for springRank.
 #   - csv to springRank functionality.
 # import scipy or numpy stats functionality.
-
+#   - Matrix: spectra, eigenvalues, etc ..
+#   - Stats: ChiSqr . . 
 
 # recursive HH
 def havelhakimi(xs):

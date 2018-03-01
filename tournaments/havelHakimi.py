@@ -1,7 +1,7 @@
 # from listables import reduce
 # from operator import add, mul, mod, pow
 
-from pdb import set_trace
+from pdb import set_trace as st
 
 
 # TODO:
@@ -24,7 +24,6 @@ def havelhakimi(xs):
 
 print(havelhakimi([2,3,4,3,2])) # no Erdos graphs
 print(havelhakimi([2,1,1])) # yes Erdos graphs
-
 
 class Blinky(): # THIS IS HERE FOR REFERENCE.
   def __init__(self, seed=None, rule=90):

@@ -24,11 +24,12 @@ def barGraph():
 
 # How would I make this better?
 def table():
-  plt.table(cellText="this dude")
+  plt.table(cellColours="1010110110",
+            cellText="(1 2 2)122")
   plt.title("An Excel Table?")
   plt.show()
 
 # Can I use eval or something like
 # it to typeset the latex?
-
+# table()
 # st()

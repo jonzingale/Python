@@ -16,9 +16,17 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 
+from django.contrib.sitemaps.views import sitemap
+from books.models import BookSiteMap
+
+sitemaps = { 'books': BookSiteMap, }
+
 urlpatterns = [
     url(r'^', admin.site.urls),
     url(r'^admin/', admin.site.urls),
     url(r'^polls/', include('polls.urls')),
-    url(r'^books/', include('books.urls')),
+    url(r'^books/', include('books.urls'), name='books'),
+
+    # sitemap
+    url(r'^sitemap\.xml/$', sitemap, {'sitemaps': sitemaps}, name='sitemap'),
 ]

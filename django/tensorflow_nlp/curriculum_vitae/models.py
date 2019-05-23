@@ -5,10 +5,11 @@ from django.contrib.sitemaps import Sitemap
 
 class CurriculumVitae(models.Model):
   project = models.CharField(max_length=200)
-  location = models.CharField(max_length=200)
-  start_date = models.CharField(max_length=200)
-  end_date = models.BigIntegerField(default=0)
-  tags = models.IntegerField(default=0)
+  location = models.CharField(null=True, blank=True, max_length=200)
+  start_date = models.CharField(null=True, blank=True, max_length=200)
+  end_date = models.CharField(null=True, default='Present', max_length=200)
+  tags = models.CharField(null=True, blank=True, max_length=200)
+  description = models.CharField(max_length=3000, null=True, blank=True)
 
   def __str__(self):
     return self.project

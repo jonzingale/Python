@@ -24,8 +24,8 @@ sitemaps = { 'books': BookSiteMap, }
 urlpatterns = [
     url(r'^', admin.site.urls),
     url(r'^admin/', admin.site.urls),
-    url(r'^polls/', include('polls.urls')),
     url(r'^books/', include('books.urls'), name='books'),
+    # url(r'^curriculum-vitae/', include('curriculum_vitae.urls'), name='projects'),
 
     # sitemap
     url(r'^sitemap\.xml/$', sitemap, {'sitemaps': sitemaps}, name='sitemap'),

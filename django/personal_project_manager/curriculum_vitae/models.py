@@ -3,7 +3,7 @@ from django.db import models
 from django.contrib.sites.models import Site
 from django.contrib.sitemaps import Sitemap
 
-class CurriculumVitae(models.Model):
+class Project(models.Model):
   project = models.CharField(max_length=200)
   location = models.CharField(null=True, blank=True, max_length=200)
   start_date = models.CharField(null=True, blank=True, max_length=200)

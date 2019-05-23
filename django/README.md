@@ -8,7 +8,9 @@ python manage.py createsuperuser --username=admin
 ```
 
 #### The Dream.
-- Library of Congress Book Scraper
+- Library of Congress book scraper
 - Backend for personal website
 - Curriculum Vitae engine
 - Santa Fe maps
+- Library book renewal
+- Job crawler

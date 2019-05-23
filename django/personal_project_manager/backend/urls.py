@@ -1,4 +1,4 @@
-"""personal_project_manager URL Configuration
+"""backend URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.11/topics/http/urls/
@@ -16,17 +16,14 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 
-from django.contrib.sitemaps.views import sitemap
-from books.models import BookSiteMap
-
-sitemaps = { 'books': BookSiteMap, }
+# from django.contrib.sitemaps.views import sitemap
 
 urlpatterns = [
     url(r'^', admin.site.urls),
     url(r'^admin/', admin.site.urls),
     url(r'^books/', include('books.urls'), name='books'),
-    url(r'^curriculum-vitae/', include('curriculum_vitae.urls'), name='projects'),
+    url(r'^cv/', include('curriculum_vitae.urls'), name='projects'),
 
     # sitemap
-    url(r'^sitemap\.xml/$', sitemap, {'sitemaps': sitemaps}, name='sitemap'),
+    # url(r'^sitemap\.xml/$', sitemap, {'sitemaps': sitemaps}, name='sitemap'),
 ]

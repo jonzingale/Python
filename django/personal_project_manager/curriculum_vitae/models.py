@@ -13,3 +13,14 @@ class CurriculumVitae(models.Model):
 
   def __str__(self):
     return self.project
+
+class Publications(models.Model):
+  title = models.CharField(max_length=200)
+  journal = models.CharField(null=True, blank=True, max_length=200)
+  url = models.CharField(null=True, blank=True, max_length=200)
+  pub_date = models.CharField(null=True, default='Present', max_length=200)
+  tags = models.CharField(null=True, blank=True, max_length=200)
+  description = models.CharField(max_length=3000, null=True, blank=True)
+
+  def __str__(self):
+    return self.title

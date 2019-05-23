@@ -1,5 +1,5 @@
 """
-WSGI config for tensorflow_nlp project.
+WSGI config for personal_project_manager project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tensorflow_nlp.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "personal_project_manager.settings")
 
 application = get_wsgi_application()

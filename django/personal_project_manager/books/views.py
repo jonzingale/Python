@@ -4,7 +4,7 @@ from .forms import BookForm
 from django.shortcuts import redirect
 
 import django_rq
-from loc_book_scraper import find_book
+from 'lcc_scraper/loc_book_scraper' import find_book
 
 def index(request):
     return HttpResponse("A place to catalog library books")

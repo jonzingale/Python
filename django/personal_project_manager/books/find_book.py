@@ -1,5 +1,5 @@
 import django_rq
-from loc_book_scraper import find_book
+from 'lcc_scraper/loc_book_scraper' import find_book
 
 # be sure that redis is running: start_redis
 # to pick up queue run: python manage.py rqworker default

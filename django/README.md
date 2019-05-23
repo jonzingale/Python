@@ -1,7 +1,7 @@
 ### A personal Django Admin
 
 ```
-python manage.py runserver
+python manage.py runserver 0.0.0.0:2323
 
 probably will never remember a password or anything so:
 python manage.py createsuperuser --username=admin

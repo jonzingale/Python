@@ -69,7 +69,7 @@ class bank:
   def end_of_day_balance(self):
     balances = []
     for key, group in groupby(self.rows, lambda x: x[0]):
-      balances.append((key, list(group)[0][-1]))
+      balances.append((key, list(group)[-1][-1]))
     return(balances)
 
   def end_of_week_balance(self):

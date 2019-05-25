@@ -18,12 +18,18 @@ class bank:
   def __init__(self):
     self.rows = self.get_data()
 
-    self.daily_spent = self.end_of_day_debit()
-    self.daily_credit = self.end_of_day_credit()
+    self.daily_debit = self.end_of_day_debit()
     self.weekly_debit = self.end_of_week_debit()
+
+    self.daily_credit = self.end_of_day_credit()
 
     self.daily_balance = self.end_of_day_balance()
     self.weekly_balance = self.end_of_week_balance()
+
+    self.avg_weekly_debit = self.average_weekly_debit()
+    self.avg_daily_debit = self.average_daily_debit()
+
+    self.avg_weekly_credit = self.average_weekly_credit()
 
   def parseCurrency(self, string):
     currency = float(re.sub('\$?','', string).replace(',',''))
@@ -64,12 +70,41 @@ class bank:
     balances = [ v['balance'] for v in self.rows.values()]
     return(balances)
 
-  def end_of_week_debit(self):
-    return(self.daily_spent[0::7])
+  def end_of_week_debit(self, tots=[]):
+    for i in range(len(self.daily_debit)//7):
+      val = sum(self.daily_debit[i*7:(i+1)*7])
+      tots.append(val)
+    return(tots)
+
+  def end_of_week_credit(self, tots=[]):
+    for i in range(len(self.daily_credit)//7):
+      val = sum(self.daily_credit[i*7:(i+1)*7])
+      tots.append(val)
+    return(tots)
 
   def end_of_week_balance(self):
     return(self.daily_balance[0::7])
 
+  def average_weekly_debit(self):
+    num = sum(self.end_of_week_debit())
+    div = len(self.end_of_week_debit())
+    return(num/div)
+
+  def average_daily_debit(self):
+    num = sum(self.end_of_day_debit())
+    div = len(self.end_of_day_debit())
+    return(num/div)
+
+  def average_weekly_credit(self):
+    num = sum(self.end_of_week_credit())
+    div = len(self.end_of_week_credit())
+    return(num/div)
+
+
 bb = bank()
-pp(bb.end_of_week_debit())
-# st()
+# pp(bb.end_of_day_debit())
+# pp(bb.end_of_week_debit())
+print(bb.avg_daily_debit)
+print(bb.avg_weekly_debit)
+print(bb.avg_weekly_credit)
+st()

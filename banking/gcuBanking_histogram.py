@@ -9,11 +9,13 @@ def banking_chart(data):
   plt.plot(range(len(data)), data)#, 'ro')
   plt.show()
 
+banking_chart(bb.total_debit())
+
 # banking_chart(bb.daily_debit)
 # banking_chart(bb.daily_balance)
 # banking_chart(bb.daily_credit)
 
-banking_chart(bb.weekly_debit)
+# banking_chart(bb.weekly_debit)
 # banking_chart(bb.weekly_balance)
 
 plt.show()

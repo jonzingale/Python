@@ -63,7 +63,8 @@ class bank:
     checking = self.checking.data
     savings = self.savings.data
 
-    # till transfers are worked out credit and debit are the same
+    # till transfers are worked out credit
+    # and debit are the same
     for key in checking.keys():
       data[key] = {'debit': 0, 'balance': 0}
 
@@ -101,12 +102,21 @@ class bank:
     return(self.daily_balance[0::7])
 
   def total_debit(self):
-    debits = [ v['debit'] for v in self.total_data.values()]
+    debits = [ -v['debit'] for v in self.total_data.values()]
     return(debits)
+
+  def total_balance(self):
+    balances = [ -v['balance'] for v in self.total_data.values()]
+    return(balances)
 
   def average_weekly_debit(self):
     num = sum(self.weekly_debit())
     div = len(self.weekly_debit())
+    return(num/div)
+
+  def average_total_daily_debit(self):
+    num = sum(self.total_debit())
+    div = len(self.total_debit())
     return(num/div)
 
   def average_daily_debit(self):
@@ -119,8 +129,10 @@ class bank:
     div = len(self.weekly_credit())
     return(num/div)
 
+bb = bank()
+# pp(bb.checking.data)
+# pp(bb.average_total_daily_debit())
 
-# bb = bank()
 # pp(bb.total_data)
 
 # pp(bb.checking.data)

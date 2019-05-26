@@ -6,10 +6,10 @@ bb = gcuBanking.bank()
 fig = plt.figure(figsize=(17, 8))
 
 def banking_chart(data):
-  plt.plot(range(len(data)), data)#, 'ro')
+  plt.plot(range(len(data)), data, 'bo')
   plt.show()
 
-banking_chart(bb.total_debit())
+banking_chart(bb.total_balance())
 
 # banking_chart(bb.daily_debit)
 # banking_chart(bb.daily_balance)

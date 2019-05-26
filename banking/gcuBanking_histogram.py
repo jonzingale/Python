@@ -5,11 +5,16 @@ import gcuBanking
 bb = gcuBanking.bank()
 fig = plt.figure(figsize=(17, 8))
 
-def banking_chart(data):
-  plt.plot(range(len(data)), data, 'bo')
+def banking_chart(data1=[], data2=[]):
+  plt.plot(range(len(data1)), data1, 'b')
+  plt.plot(range(len(data2)), data2, 'g')
   plt.show()
 
-banking_chart(bb.total_balance())
+banking_chart(
+  bb.daily_balance(),
+  bb.daily_debit())
+  # bb.total_balance(),
+  # bb.total_debit())
 
 # banking_chart(bb.daily_debit)
 # banking_chart(bb.daily_balance)
@@ -20,3 +25,19 @@ banking_chart(bb.total_balance())
 
 plt.show()
 
+# methods:
+# daily_debit
+# daily_credit
+# daily_balance
+
+# weekly_debit
+# weekly_credit
+# weekly_balance
+
+# total_debit
+# total_balance
+
+# average_weekly_debit
+# average_total_daily_debit
+# average_daily_debit
+# average_weekly_credit

@@ -79,11 +79,11 @@ class bank:
     return(spents)
 
   def daily_credit(self):
-    spents = [ v['credit'] for v in self.checking_data.values()]
+    spents = [ v['credit'] for v in self.checking.data.values()]
     return(spents)
 
   def daily_balance(self):
-    balances = [ v['balance'] for v in self.checking_data.values()]
+    balances = [ v['balance'] for v in self.checking.data.values()]
     return(balances)
 
   def weekly_debit(self, tots=[]):

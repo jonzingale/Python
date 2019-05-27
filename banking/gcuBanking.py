@@ -2,7 +2,6 @@ from pdb import set_trace as st
 from pprint import pprint as pp
 from os.path import expanduser
 import datetime as dt
-import pandas as pd
 from personal import *
 import csv
 import re

@@ -2,6 +2,8 @@ from pdb import set_trace as st
 from pprint import pprint as pp
 from os.path import expanduser
 import datetime as dt
+import pandas as pd
+from personal import *
 import csv
 import re
 
@@ -17,6 +19,7 @@ class account:
   def __init__(self, filename):
     self.data = {}
     self.parseDATA(filename)
+    pandaData(filename)
 
   def parseCurrency(self, string):
     currency = float(re.sub('\$?','', string).replace(',',''))
@@ -130,17 +133,3 @@ class bank:
     return(num/div)
 
 bb = bank()
-# pp(bb.checking.data)
-# pp(bb.average_total_daily_debit())
-
-# pp(bb.total_data)
-
-# pp(bb.checking.data)
-# pp(bb.daily_debit())
-
-# pp(bb.weekly_debit())
-# print(bb.avg_daily_debit)
-# print(bb.avg_weekly_debit)
-# print(bb.avg_weekly_credit)
-# pp(bb.total_data)
-# st()

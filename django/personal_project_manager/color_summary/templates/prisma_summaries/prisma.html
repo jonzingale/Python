@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html lang="en-us">
+  <head>
+    <script href="/color_summary/templates/prisma_summaries/js/d3.v4.min.js" type="text/javascript"></script>
+    <link href='/fonts/nunitoSans.css' rel="stylesheet">
+    <link href="/prismacolorsummary.css" rel="stylesheet" type="text/css" /> 
+    <script src='/js/d3.v4.min.js' type="text/javascript"></script>
+    <script src="/js/d3-scale-chromatic.v1.min.js"></script>
+    <script src="/js/helpers.js"></script>
+  </head>
+  <div class='title'>Prismacolor Summary</div>
+
+  <main role="main">
+    <table><tbody>
+      <td><div class='swatches'></div></td>
+      <td><div class="images"></div></td>
+    </table></tbody>
+    <div class='footer'></div>
+  </main>
+
+  <script>
+    const summaryJson = "/colorSummaries/Haskell/summary.json"
+    const filenameJson = "/colorSummaries/Haskell/filename.json"
+    const warmgrey = "rgb(139,160,172)"
+    const radius = 60
+    const modulus = 5
+    const height = radius*2.15
+
+    function rasterX(i) {
+      return mod(i, modulus)*height + height
+    } 
+
+    function rasterY(i, bool=false) {
+      var offset = bool ? 5*(-1)**i : 0
+      return div(i, modulus)*height + height + offset - 30
+    }
+
+    function formatStr(str) {
+      var split = str.split(' ')
+      var uped = split.map(x => {
+        return (x.charAt(0).toUpperCase() + x.slice(1))
+      })
+
+      var result = uped.join(' ')
+      return result
+    }
+
+    d3.json(filenameJson, function(error, data){
+      var imageContainer = d3.selectAll('.images')
+      imageContainer.append('img')
+        .attr('src', data.name)
+        .attr('width', 500)
+        .attr('height', 500)
+    })
+
+    d3.json(summaryJson, function(error, data){
+
+      var container = d3.selectAll('.swatches')
+        .append('svg').attr('width', 750)
+        .attr('height', 125 * (1+data.length / 5))
+
+      var colorContainer = container.append('g').selectAll('.color')
+
+      var prismas = colorContainer
+        .data(data).enter().append('circle')
+        .attr('class', 'circle')
+        .attr('cx', function(d,i) {return rasterX(i) })
+        .attr('cy', function(d,i) {return rasterY(i) })
+        .attr('fill', function(d) {return `rgb( ${d.color} )`})
+        .attr("r", radius)
+
+      var colorNames1 = colorContainer
+        .data(data).enter().append('text')
+        .attr('class','color-text')
+        .attr('fill', d => add(d.color) < 270 ? warmgrey : "black")
+        .attr('x', function(d,i) { return rasterX(i) - 45 })
+        .attr('y', function(d,i) { return rasterY(i, true) - 6 })
+        .text(d => d.name.split(' ')[0])
+
+      var colorNames2 = colorContainer
+        .data(data).enter().append('text')
+        .attr('class','color-text')
+        .attr('fill', d => add(d.color) < 270 ? warmgrey : "black")
+        .attr('x', function(d,i) { return rasterX(i) - 40 })
+        .attr('y', function(d,i) { return rasterY(i, true) + 15 })
+        .text(d => d.name.split(' ').slice(1).join(' '))
+    });
+  </script>
+</html>

@@ -16,14 +16,8 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 
-# from django.contrib.sitemaps.views import sitemap
-
 urlpatterns = [
     url(r'^', admin.site.urls),
-    # url(r'^admin/', admin.site.urls),
-    # url(r'^books/', include('books.urls'), name='books'),
-    # url(r'^cv/', include('curriculum_vitae.urls'), name='projects'),
-
-    # sitemap
-    # url(r'^sitemap\.xml/$', sitemap, {'sitemaps': sitemaps}, name='sitemap'),
+    url('', include('color_summary.urls'), name='detail'),
+    url('admin/', admin.site.urls),
 ]

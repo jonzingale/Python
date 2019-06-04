@@ -5,8 +5,8 @@ from django.contrib.sitemaps import Sitemap
 
 class Summary(models.Model):
   image_title = models.CharField(max_length=200)
-  json = models.CharField(null=True, blank=True, max_length=200)
+  json = models.CharField(null=True, blank=True, max_length=1000)
   image = models.CharField(default="someURL", max_length=100)
 
   def __str__(self):
-    return self.title
+    return self.image_title

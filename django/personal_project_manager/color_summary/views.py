@@ -14,3 +14,12 @@ def detail(request):
     # """.format(title, json)
     # return HttpResponse(html)
     return render(request, 'prisma_summaries/prisma.html') #, {'title': title, 'cal': cal})
+
+# def d3(request):
+#   return render(request, 'prisma_summaries/js/d3.v4.min.js')
+
+# def nunitoSans(request):
+#   return render(request, 'prisma_summaries/fonts/nunitoSans.css')
+
+# def style(request):
+#   return render(request, 'prisma_summaries/js/prismacolorsummary.css')

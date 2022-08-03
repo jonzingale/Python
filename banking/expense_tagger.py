@@ -49,7 +49,6 @@ for row in untagged_data.iterrows():
 		label = row_memo
 		vals = tagged_data.query('Memo == @label')
 		cat = vals.head(1)['Category'].values[0]
-		# row[1]['Category'] = cat
 		categories.append(cat)
 	elif cond2:
 		categories.append(cond2)

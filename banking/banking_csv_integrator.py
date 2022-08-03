@@ -3,25 +3,28 @@ from pdb import set_trace as st
 from os.path import expanduser
 from itertools import *
 import datetime as dt
+import pandas as pd
 import csv
 import re
 import os
 
+# TODO:
+# 1. Add categories column.
+
 HOME = expanduser("~")
-HISTORICAL_CSV = '%s/Desktop/banking/one_year.csv' % HOME
-NEW_CSV_PATH = './../../../banking/'
-CSV_REGEX = 'History-(\d+)-\d+'
+HISTORICAL_CSV = '%s/Desktop/banking/GCU/historical_2020.csv' % HOME
+NEW_CSV_PATH = './../../../banking/GCU/gcu_histories/'
+HEADER = ["Account Number","Type","Posted","Effective Date","Transfer ID",
+  "Description","Memo","Amount","Ending Balance"]
+HEADER2 = ["Index"].append(HEADER)
+CSV_REGEX = '(\d+)-\d+'
 
 class bank_csv:
   def __init__(self):
-    self.rows = self.get_data()
-    self.last_date = self.string_to_date(self.rows[0][0])
+    self.historical = self.get_historical_data()
+    self.last_date = pd.to_datetime(self.historical['Effective Date'].array[-1])
     self.newest_csv = self.most_recent_csv()
     if self.newest_csv: self.merge_new_into_old()
-
-  def string_to_date(self, date_str):
-    month, day, year = map(lambda x: int(x), date_str.split('/'))
-    return(dt.date(year, month, day))
 
   def most_recent_csv(self):
     most_recent_date, most_recent = self.last_date, None
@@ -38,21 +41,24 @@ class bank_csv:
     return(most_recent)
 
   def merge_new_into_old(self):
-    with open(NEW_CSV_PATH + self.newest_csv) as csvfile:
-      banking = csv.reader(csvfile, delimiter=',')
-      rows = [row for row in banking]
-      recents = takewhile(lambda x: self.string_to_date(x[0]) > self.last_date, rows)
-      self.rows = list(recents) + self.rows
+    csv = pd.read_csv(NEW_CSV_PATH + self.newest_csv, header='infer',
+      parse_dates=['Effective Date', 'Posted'])
 
-      # save the merged files.
-      with open(HISTORICAL_CSV, 'w') as csvfile:
-          writer = csv.writer(csvfile)
-          writer.writerows(self.rows)
+    rows = []
+    for row in csv.iterrows():
+      if row[1][3] > self.last_date:
+        rows.append(row[1])
 
-  def get_data(self):
-    with open(HISTORICAL_CSV) as csvfile:
-      banking = csv.reader(csvfile, delimiter=',')
-      rows = [row for row in banking]
-    return(rows)
+    new_csv = pd.DataFrame(rows, columns=HEADER)
+    new_historical = pd.concat([self.historical, new_csv], ignore_index=True)
+    # print(new_historical['Effective Date'])
+
+    # save the merged files.
+    new_historical.to_csv(HISTORICAL_CSV, index=False)
+
+  def get_historical_data(self):
+    csv = pd.read_csv(HISTORICAL_CSV, header='infer',
+      parse_dates=['Effective Date', 'Posted'])
+    return(csv)
 
 bank_csv()

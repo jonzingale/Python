@@ -2,14 +2,13 @@ from pdb import set_trace as st
 from pprint import pprint as pp
 from os.path import expanduser
 import datetime as dt
-from personal import *
+from categorizer import pandaData
 import csv
 import re
 
 REL_PATH = expanduser("~/Desktop/banking/GCU")
 
-SAVINGS = '%s/savings_Jan19_May19.csv' % REL_PATH
-CHECKING = '%s/checking_Jan19_May19.csv' % REL_PATH
+CHECKING = '%s/historical_2020.csv' % REL_PATH
 
 HEADERS = ['Account Number', 'Type', 'Posted', 'Effective Date',
            'Transfer ID', 'Description', 'Memo', 'Amount', 'Ending Balance']
@@ -18,7 +17,7 @@ class account:
   def __init__(self, filename):
     self.data = {}
     self.parseDATA(filename)
-    pandaData(filename)
+    # pandaData(filename)
 
   def parseCurrency(self, string):
     currency = float(re.sub('\$?','', string).replace(',',''))
@@ -50,30 +49,22 @@ class account:
           data[dateKey]['credit'] += debit
 
         data[dateKey]['balance'] = balance
-        # update instead of equals, otherwise shares
-        # data between savings and checking objects :(
         self.data.update(data)
 
 class bank:
   def __init__(self):
     self.total_data = {}
     self.checking = account(CHECKING)
-    self.savings = account(SAVINGS)
     self.get_total_data()
 
   def get_total_data(self, data={}, rows=[]):
     checking = self.checking.data
-    savings = self.savings.data
 
     # till transfers are worked out credit
     # and debit are the same
     for key in checking.keys():
       data[key] = {'debit': 0, 'balance': 0}
 
-    for key in savings.keys():
-      data[key]['debit'] += savings[key]['debit']
-      data[key]['debit'] += savings[key]['credit']
-      data[key]['balance'] += savings[key]['balance']
     self.total_data.update(data)
 
   def daily_debit(self):
@@ -89,14 +80,16 @@ class bank:
     return(balances)
 
   def weekly_debit(self, tots=[]):
-    for i in range(len(self.daily_debit)//7):
-      val = sum(self.daily_debit[i*7:(i+1)*7])
+    dd = self.daily_debit()
+    for i in range(len(dd)//7):
+      val = sum(dd[i*7:(i+1)*7])
       tots.append(val)
     return(tots)
 
   def weekly_credit(self, tots=[]):
-    for i in range(len(self.daily_credit)//7):
-      val = sum(self.daily_credit[i*7:(i+1)*7])
+    dc = self.daily_credit()
+    for i in range(len(dc)//7):
+      val = sum(dc[i*7:(i+1)*7])
       tots.append(val)
     return(tots)
 

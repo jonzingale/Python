@@ -25,9 +25,6 @@ def pandaData(filename):
   # df for dataframe
   df = pd.read_csv(filename)
   df = df.sort_values('Memo')
-  # df.to_csv('sorted.csv', index=False)
-
-  # df.keys()
 
   memos = {}
   for memo in df['Memo']:
@@ -51,9 +48,3 @@ def pandaData(filename):
   # get unique categories
   print(df['Memo'].unique())
   st()
-
-    # ordered data!!!
-    # with open(filename) as csvfile:
-    #   dictCsv = csv.DictReader(csvfile)
-    #   for row in dictCsv:
-    #     st()

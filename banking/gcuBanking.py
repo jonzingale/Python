@@ -2,7 +2,7 @@ from pdb import set_trace as st
 from pprint import pprint as pp
 from os.path import expanduser
 import datetime as dt
-from categorizer import pandaData
+import pandas as pd
 import csv
 import re
 
@@ -11,21 +11,21 @@ REL_PATH = expanduser("~/Desktop/banking/GCU")
 CHECKING = '%s/historical_2020.csv' % REL_PATH
 
 HEADERS = ['Account Number', 'Type', 'Posted', 'Effective Date',
-           'Transfer ID', 'Description', 'Memo', 'Amount', 'Ending Balance']
+  'Transfer ID', 'Description', 'Memo', 'Amount', 'Ending Balance']
 
 class account:
   def __init__(self, filename):
     self.data = {}
     self.parseDATA(filename)
-    # pandaData(filename)
 
   def parseCurrency(self, string):
     currency = float(re.sub('\$?','', string).replace(',',''))
     return(currency)
 
+  # 2020-01-01 00:00:00
   def parseDate(self, date_str):
-    month, day, year = map(lambda x: int(x), date_str.split('/'))
-    return(dt.date(year, month, day))
+    pddt = pd.to_datetime(date_str)
+    return(pddt)
 
   def parseDATA(self, filename, data={}, rows=[]):
     with open(filename) as csvfile:

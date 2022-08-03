@@ -22,7 +22,6 @@ class account:
     currency = float(re.sub('\$?','', string).replace(',',''))
     return(currency)
 
-  # 2020-01-01 00:00:00
   def parseDate(self, date_str):
     pddt = pd.to_datetime(date_str)
     return(pddt)
@@ -30,7 +29,7 @@ class account:
   def parseDATA(self, filename, data={}, rows=[]):
     with open(filename) as csvfile:
       banking = csv.reader(csvfile, delimiter=',')
-      next(banking, None)
+      next(banking, None) # remove header
 
       for row in banking:
         dateKey = self.parseDate(row[3])
@@ -60,7 +59,7 @@ class bank:
   def get_total_data(self, data={}, rows=[]):
     checking = self.checking.data
 
-    # till transfers are worked out credit
+    # until transfers are worked out credit
     # and debit are the same
     for key in checking.keys():
       data[key] = {'debit': 0, 'balance': 0}
@@ -94,7 +93,8 @@ class bank:
     return(tots)
 
   def weekly_balance(self):
-    return(self.daily_balance[0::7])
+    dailybal = self.daily_balance()
+    return(dailybal[0::7])
 
   def total_debit(self):
     debits = [ -v['debit'] for v in self.total_data.values()]
@@ -103,25 +103,5 @@ class bank:
   def total_balance(self):
     balances = [ -v['balance'] for v in self.total_data.values()]
     return(balances)
-
-  def average_weekly_debit(self):
-    num = sum(self.weekly_debit())
-    div = len(self.weekly_debit())
-    return(num/div)
-
-  def average_total_daily_debit(self):
-    num = sum(self.total_debit())
-    div = len(self.total_debit())
-    return(num/div)
-
-  def average_daily_debit(self):
-    num = sum(self.daily_debit())
-    div = len(self.daily_debit())
-    return(num/div)
-
-  def average_weekly_credit(self):
-    num = sum(self.weekly_credit())
-    div = len(self.weekly_credit())
-    return(num/div)
 
 bb = bank()

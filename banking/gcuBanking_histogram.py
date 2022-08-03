@@ -10,18 +10,8 @@ def banking_chart(data1=[], data2=[]):
   plt.plot(range(len(data2)), data2, 'g')
   plt.show()
 
-banking_chart(
-  bb.daily_balance(),
-  bb.daily_debit())
-  # bb.total_balance(),
-  # bb.total_debit())
-
-# banking_chart(bb.daily_debit)
-# banking_chart(bb.daily_balance)
-# banking_chart(bb.daily_credit)
-
-# banking_chart(bb.weekly_debit)
-# banking_chart(bb.weekly_balance)
+# banking_chart(bb.daily_balance(), bb.daily_debit())
+banking_chart(bb.weekly_balance(), bb.weekly_debit())
 
 plt.show()
 
@@ -36,8 +26,3 @@ plt.show()
 
 # total_debit
 # total_balance
-
-# average_weekly_debit
-# average_total_daily_debit
-# average_daily_debit
-# average_weekly_credit

@@ -1,13 +1,13 @@
 import pandas as pd
-import re
 from pdb import set_trace as st
+import re
 
-# This file parses csvs with pandas.
+# This file parses csvs, via pandas, into dataframes.
 # data cleaning, exceptions and memo substitutions.
 
 def getCategories(filename):
   df = pd.read_csv(filename)
-  df = df.sort_values('Memo')
+  # df = df.sort_values('Memo')
 
   memos = {}
   for memo in df['Memo']:
@@ -22,9 +22,7 @@ def getCategories(filename):
     memos[memo] = None
 
 def pandaData(filename):
-  # df for dataframe
   df = pd.read_csv(filename)
-  df = df.sort_values('Memo')
 
   memos = {}
   for memo in df['Memo']:

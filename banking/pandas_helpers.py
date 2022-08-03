@@ -8,14 +8,9 @@ HISTORICAL_CSV = '%s/historical_2020.csv' % HOME
 DATE_FIELDS = ['Effective Date', 'Posted']
 
 df = pd.read_csv(HISTORICAL_CSV, parse_dates=DATE_FIELDS)
+
 grouped = df.groupby(df['Category'])
-df_new = grouped.get_group("Not Labeled")
-
-for r in df_new.iterrows(): pp(r)
-
-
-grouped = df.groupby(df['Memo'])
-df_new = grouped.get_group('OPENEYE SCIENTIF/DIRECT DEP')
+df_new = grouped.get_group('Paycheck')
 
 # df_new['Amount'].transform(lambda x: float(x)) # :: Series
 

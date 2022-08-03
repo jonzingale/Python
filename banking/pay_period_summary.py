@@ -11,13 +11,16 @@ from pprint import pprint as pp
 # 2. summary object methods, visualizer
 
 HOME = expanduser("~/Desktop/banking/GCU")
-# HISTORICAL_CSV = '%s/historical_2020.csv' % HOME
-HISTORICAL_CSV = '%s/last_pay_period.csv' % HOME
+HISTORICAL_CSV = '%s/historical_2020.csv' % HOME
+# HISTORICAL_CSV = '%s/last_pay_period.csv' % HOME
 
 DATE_FIELDS = ['Effective Date', 'Posted']
 CATEGORIES = ["Paycheck","Beer","Grocery","Book","Coffee","Bill","Video",
 	"Restaurant","Child Care","Art","CVS","Music","IFAM","Gas","Reimbursement",
-	"Zoo","Parking","Bodywork","Other"]
+	"Zoo","Parking","Bodywork","Other","Not Labeled","Taxes"]
+
+HEADER = ["Account Number","Type","Posted","Effective Date","Transfer ID",
+  "Description","Memo","Amount","Ending Balance","Category"]
 
 data = pd.read_csv(HISTORICAL_CSV, parse_dates=DATE_FIELDS)
 
@@ -26,26 +29,42 @@ def categories():
 	for b in data['Category'].unique():
 		print(b)
 
-payroll = []
-for row in data.iterrows():
-	if row[1]['Memo'] == 'OPENEYE SCIENTIF/DIRECT DEP':
-		payroll.append(row)
+# get paycheck periods
+def periods():
+	# group by Paycheck
+	grouped = data.groupby(data['Category'])
+	# get indices of Paychecks
+	paycheck_idxs = grouped.get_group('Paycheck').index
 
-totals = {}
-for cat in CATEGORIES:
-	totals[cat] = 0
-	for row in data.iterrows():
-		if row[1]['Category'] == cat:
-			amount = row[1]["Amount"]
-			if isinstance(amount, str):
-				amount = amount.replace(',','')
-			totals[cat] += float(amount)
+	# cleverly zip and slice
+	ps = []
+	(head,*tail) = paycheck_idxs
+	zipped = zip(paycheck_idxs, tail)
+	for (x,y) in zipped:
+		ps.append(data.iloc[x:y])
 
-monthly_diff = data['Amount'].sum()
+	return(ps)
+
+def to_currency(maybeStr):
+	if isinstance(maybeStr, str):
+		maybeStr = maybeStr.replace(',','')
+	return(float(maybeStr))
+
+def totals(df):
+	totals = {}
+	for cat in CATEGORIES:
+		totals[cat] = 0
+		for row in df.iterrows():
+			if row[1]['Category'] == cat:
+				amount = to_currency(row[1]["Amount"])
+				totals[cat] += float(amount)
+	totals['_Delta'] = sum([to_currency(x) for x in df['Amount']])
+	return(totals)
 
 def main():
-	pp(totals)
-	pp(monthly_diff)
+	ps = periods()
+	for period in periods():
+		p = pd.DataFrame(period, columns=HEADER)
+		pp(totals(p))
 
 main()
-# st()

@@ -1,17 +1,12 @@
 from pdb import set_trace as st
 from pprint import pprint as pp
 from os.path import expanduser
-import datetime as dt
 import pandas as pd
 import csv
 import re
 
 REL_PATH = expanduser("~/Desktop/banking/GCU")
-
 CHECKING = '%s/historical_2020.csv' % REL_PATH
-
-HEADERS = ['Account Number', 'Type', 'Posted', 'Effective Date',
-  'Transfer ID', 'Description', 'Memo', 'Amount', 'Ending Balance']
 
 class account:
   def __init__(self, filename):

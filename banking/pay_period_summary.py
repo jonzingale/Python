@@ -45,20 +45,15 @@ def periods():
 
 	return(ps)
 
-def to_currency(maybeStr):
-	if isinstance(maybeStr, str):
-		maybeStr = maybeStr.replace(',','')
-	return(float(maybeStr))
-
 def totals(df):
 	totals = {}
 	for cat in CATEGORIES:
 		totals[cat] = 0
 		for row in df.iterrows():
 			if row[1]['Category'] == cat:
-				amount = to_currency(row[1]["Amount"]) 
+				amount = row[1]["Amount"]
 				totals[cat] += float(amount)
-	totals['_Delta'] = sum([to_currency(x) for x in df['Amount']])
+	totals['_Delta'] = sum(df['Amount'])
 	return(totals)
 
 def main():

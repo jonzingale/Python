@@ -33,7 +33,6 @@ def to_currency(maybeStr):
 
 # TODO:
 # Make module a function of dataset rather than hard-coded CSV
-# Convert currencies early
 # Update dictionary with all known Memo/Category relations
 
 # 0. initialize data, make backup
@@ -45,7 +44,11 @@ if 'Category' not in untagged_data.columns:
 	untagged_data['Category'] = [UNIDENTIFIED for i in untagged_data.iterrows()]
 data = untagged_data
 
-# 2. compare untagged csv to dictionary or known values
+# 2. convert Amount to float
+amount = data['Amount'].transform(lambda x: to_currency(x))
+data['Amount'] = amount
+
+# 3. compare untagged csv to dictionary or known values
 categories = []
 for row in untagged_data.iterrows():
 	if row[1]['Category'] == UNIDENTIFIED:
@@ -53,7 +56,7 @@ for row in untagged_data.iterrows():
 		cond1 = row_memo in kv_categories.keys() and kv_categories[row_memo]
 		cond2 = re.match('CHECK NO. d*', row[1]['Description'], re.IGNORECASE)
 		cond3 = row[1]['Amount'] == "-1,300.00"
-		cond4 = abs(to_currency(row[1]['Amount'])) < 1000
+		cond4 = abs(row[1]['Amount']) < 1000
 		if cond1: # known dictionary
 			categories.append(cond2)
 		elif cond2 and cond3: # rent
@@ -67,10 +70,7 @@ for row in untagged_data.iterrows():
 
 data['Category'] = categories
 
-# convert Amount to float
-# df_new['Amount'].transform(lambda x: float(x))
-
 # save with new data
 data.to_csv(HISTORICAL_CSV, index=False)
 
-# 3. hand tag with client
+# 4. hand tag with client

@@ -1,3 +1,4 @@
 *.csv
 *.json
 personal.py
+memos_and_categories.py

@@ -9,7 +9,6 @@ import re
 
 HOME = expanduser("~/Desktop/banking/GCU")
 HISTORICAL_CSV = '%s/historical_2020.csv' % HOME
-# TAGGED_CSV = '%s/last_pay_period.csv' % HOME
 CSV_TMP = '%s/historical_2020_tmp.csv' % HOME
 
 UNIDENTIFIED = 'Not Labeled'
@@ -34,7 +33,8 @@ def to_currency(maybeStr):
 
 # TODO:
 # Make module a function of dataset rather than hard-coded CSV
-# convert currencies early
+# Convert currencies early
+# Update dictionary with all known Memo/Category relations
 
 # 0. initialize data, make backup
 shutil.copyfile(HISTORICAL_CSV, CSV_TMP)

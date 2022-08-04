@@ -16,8 +16,8 @@ HISTORICAL_CSV = '%s/historical_2020.csv' % HOME
 
 DATE_FIELDS = ['Effective Date', 'Posted']
 CATEGORIES = ["Paycheck","Beer","Grocery","Book","Coffee","Bill","Video",
-	"Restaurant","Child Care","Art","CVS","Music","IFAM","Gas","Reimbursement",
-	"Zoo","Parking","Bodywork","Other","Not Labeled","Taxes"]
+	"Restaurant","Child Care","Art","CVS","Music","Gas","Reimbursement",
+	"Entertainment","Parking","Bodywork","Other","Not Labeled","Taxes"]
 
 HEADER = ["Account Number","Type","Posted","Effective Date","Transfer ID",
   "Description","Memo","Amount","Ending Balance","Category"]
@@ -56,7 +56,7 @@ def totals(df):
 		totals[cat] = 0
 		for row in df.iterrows():
 			if row[1]['Category'] == cat:
-				amount = to_currency(row[1]["Amount"])
+				amount = to_currency(row[1]["Amount"]) 
 				totals[cat] += float(amount)
 	totals['_Delta'] = sum([to_currency(x) for x in df['Amount']])
 	return(totals)
@@ -66,5 +66,7 @@ def main():
 	for period in periods():
 		p = pd.DataFrame(period, columns=HEADER)
 		pp(totals(p))
+
+	pp([totals(p)["_Delta"] for p in periods()])
 
 main()

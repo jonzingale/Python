@@ -1,22 +1,22 @@
 # This is an interactive module for tagging expenses.
 import pandas as pd
 from memos_and_categories import kv_categories
-from numpy import isin
 from os.path import expanduser
 from pdb import set_trace as st
 from pprint import pprint as pp
+import shutil
 import re
 
 HOME = expanduser("~/Desktop/banking/GCU")
-UNTAGGED_CSV = '%s/historical_2020.csv' % HOME
-TAGGED_CSV = '%s/last_pay_period.csv' % HOME
-CSV_TMP = '%s/historical_2020.csv' % HOME
+HISTORICAL_CSV = '%s/historical_2020.csv' % HOME
+# TAGGED_CSV = '%s/last_pay_period.csv' % HOME
+CSV_TMP = '%s/historical_2020_tmp.csv' % HOME
 
 UNIDENTIFIED = 'Not Labeled'
 DATE_FIELDS = ['Effective Date', 'Posted']
 CATEGORIES = ["Paycheck","Beer","Grocery","Book","Coffee","Bill","Video",
-	"Restaurant","Child Care","Art","CVS","Music","IFAM","Gas","Reimbursement",
-	"Zoo","Parking","Bodywork","Other","Clothing","Taxes"]
+	"Restaurant","Child Care","Art","CVS","Music","Gas","Reimbursement",
+	"Entertainment","Parking","Bodywork","Other","Clothing","Taxes"]
 
 HEADER = ["Account Number","Type","Posted","Effective Date","Transfer ID",
 	"Description","Memo","Amount","Ending Balance","Category"]
@@ -27,35 +27,43 @@ def get_nones(df):
 	# pp [r[1]['Memo'] for r in nones_df]
 	pp(nones_df['Memo'].unique())
 
-# TODO: Don't overwrite data
+def to_currency(maybeStr):
+	if isinstance(maybeStr, str):
+		maybeStr = maybeStr.replace(',','')
+	return(float(maybeStr))
 
-# 0. make category column with None values
-untagged_data = pd.read_csv(UNTAGGED_CSV, parse_dates=DATE_FIELDS)
-untagged_data['Category'] = [UNIDENTIFIED for i in untagged_data.iterrows()]
+# TODO:
+# Make module a function of dataset rather than hard-coded CSV
+# convert currencies early
+
+# 0. initialize data, make backup
+shutil.copyfile(HISTORICAL_CSV, CSV_TMP)
+untagged_data = pd.read_csv(HISTORICAL_CSV, parse_dates=DATE_FIELDS)
+
+# 1. make category column with None values
+if 'Category' not in untagged_data.columns:
+	untagged_data['Category'] = [UNIDENTIFIED for i in untagged_data.iterrows()]
 data = untagged_data
 
-# 1. compare untagged csv to a tagged csv, None for unknowns
-tagged_data = pd.read_csv(TAGGED_CSV, parse_dates=DATE_FIELDS)
-tagged_memos = tagged_data['Memo'].unique()
-
+# 2. compare untagged csv to dictionary or known values
 categories = []
 for row in untagged_data.iterrows():
-	row_memo = row[1]['Memo']
-	cond = row_memo in tagged_memos
-	cond2 = row_memo in kv_categories.keys() and kv_categories[row_memo]
-	cond3 = re.match('CHECK NO. d*', row[1]['Description'], re.IGNORECASE)
-	cond4 = row[1]['Amount'] == "-1,300.00"
-	if cond:
-		label = row_memo
-		vals = tagged_data.query('Memo == @label')
-		cat = vals.head(1)['Category'].values[0]
-		categories.append(cat)
-	elif cond2:
-		categories.append(cond2)
-	elif cond3 and cond4:
-		categories.append('Bill')
-	else:
-		categories.append(UNIDENTIFIED)
+	if row[1]['Category'] == UNIDENTIFIED:
+		row_memo = row[1]['Memo']
+		cond1 = row_memo in kv_categories.keys() and kv_categories[row_memo]
+		cond2 = re.match('CHECK NO. d*', row[1]['Description'], re.IGNORECASE)
+		cond3 = row[1]['Amount'] == "-1,300.00"
+		cond4 = abs(to_currency(row[1]['Amount'])) < 1000
+		if cond1: # known dictionary
+			categories.append(cond2)
+		elif cond2 and cond3: # rent
+			categories.append('Bill')
+		elif cond2 and cond4: # likely child care
+			categories.append('Child Care')
+		else: # mark as unidentified
+			categories.append(UNIDENTIFIED)
+	else: # pass through category
+		categories.append(row[1]['Category'])
 
 data['Category'] = categories
 
@@ -63,6 +71,6 @@ data['Category'] = categories
 # df_new['Amount'].transform(lambda x: float(x))
 
 # save with new data
-data.to_csv(CSV_TMP, index=False)
+data.to_csv(HISTORICAL_CSV, index=False)
 
-# 2. hand tag with client
+# 3. hand tag with client

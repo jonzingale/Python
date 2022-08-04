@@ -1,4 +1,4 @@
-##Banking Software##
+## Banking Software ##
 
 1. expense_tagger.py to fixup data on new csv
 2. banking_csv_integrator.py to merge with historical

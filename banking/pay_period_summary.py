@@ -6,6 +6,9 @@ from os.path import expanduser
 from pdb import set_trace as st
 from pprint import pprint as pp
 
+# from numpy.fft import fft, ifft
+from fft import show_fft
+
 # TODO:
 # 1. method given month/year returns summary object
 # 2. summary object methods, visualizer
@@ -59,9 +62,16 @@ def totals(df):
 def main():
 	ps = periods()
 	for period in periods():
+		fst = str(period['Posted'].head(1).values[0])
+		lst = str(period['Posted'].tail(1).head(1).values[0])
+		print(fst + '\n' + lst)
 		p = pd.DataFrame(period, columns=HEADER)
+
+		show_fft(p['Amount'])
 		pp(totals(p))
 
 	pp([totals(p)["_Delta"] for p in periods()])
 
 main()
+# show_fft(data['Amount'])
+# st()

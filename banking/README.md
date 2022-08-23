@@ -7,3 +7,4 @@
 
 TODO:
 1. learn Memo/Category relations
+ - Sayan suggests clustering, classifers or regression

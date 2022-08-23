@@ -7,6 +7,8 @@ from pdb import set_trace as st
 from pprint import pprint as pp
 
 # from numpy.fft import fft, ifft
+
+# TODO: scope to math/fft
 from fft import show_fft
 
 # TODO:

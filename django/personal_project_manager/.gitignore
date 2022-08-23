@@ -1,5 +1,4 @@
 */settings.py
 *.sqlite3
 HowTo.py
-*/images/
-*.jpg
+**/*.jpg

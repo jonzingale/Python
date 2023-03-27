@@ -16,7 +16,7 @@ from fft import show_fft
 # 2. summary object methods, visualizer
 
 HOME = expanduser("~/Desktop/banking/GCU")
-HISTORICAL_CSV = '%s/historical_2020.csv' % HOME
+HISTORICAL_CSV = '%s/historical.csv' % HOME
 # HISTORICAL_CSV = '%s/last_pay_period.csv' % HOME
 
 DATE_FIELDS = ['Effective Date', 'Posted']

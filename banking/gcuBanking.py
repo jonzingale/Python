@@ -6,7 +6,7 @@ import csv
 import re
 
 REL_PATH = expanduser("~/Desktop/banking/GCU")
-CHECKING = '%s/historical_2020.csv' % REL_PATH
+CHECKING = '%s/historical.csv' % REL_PATH
 
 class account:
   def __init__(self, filename):

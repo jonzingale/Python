@@ -8,8 +8,8 @@ import shutil
 import re
 
 HOME = expanduser("~/Desktop/banking/GCU")
-HISTORICAL_CSV = '%s/historical_2020.csv' % HOME
-CSV_TMP = '%s/historical_2020_tmp.csv' % HOME
+HISTORICAL_CSV = '%s/historical.csv' % HOME
+CSV_TMP = '%s/historical_tmp.csv' % HOME
 
 UNIDENTIFIED = 'Not Labeled'
 DATE_FIELDS = ['Effective Date', 'Posted']

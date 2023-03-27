@@ -10,7 +10,7 @@ import os
 # 1. Add categories column.
 
 HOME = expanduser("~/Desktop/banking/GCU")
-HISTORICAL_CSV = '%s/historical_2020.csv' % HOME
+HISTORICAL_CSV = '%s/historical.csv' % HOME
 NEW_CSV_PATH = '%s/gcu_histories/' % HOME
 
 DATE_FIELDS = ['Effective Date', 'Posted']

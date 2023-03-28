@@ -7,9 +7,6 @@ import numpy as np
 # This module calculates kmodes from a correlation matrix
 # construed as a distance matrix.
 
-SYMS = ['AAPL','ADI','AMAT','AMZN','ASML','BRK-B','CDNS','GOOGL',
-  'INTC','IQV','JNJ','LMT','MKL','NOC','NVDA','REPX','TSM','WSC']
-
 SYMS = ['NVDA','CDNS','AAPL','ASML','NOC','AMZN','MKL','LMT','TSM','WSC','IQV',
   'GOOGL','ADI','BRK-B','JNJ','INTC','DD','ITA','UBS','SIEGY','AMAT','REPX',
   'VDE','EGLE','IX','VFC','VDC','PARA','IBM','SPG','PHG','CVX','SWN','EQT',
@@ -56,6 +53,3 @@ def main(syms, k=3, yrs=7):
   clusters = cluster_coordinates(syms, graph, k)
 
   return clusters
-
-# ret = main(SYMS, 15, 5)
-# print(ret)

@@ -16,6 +16,8 @@ Further, the following number is never much larger ~3x and so has effectively
 the same pool of primes to work from. This suggests a kind of gravity that
 guides a number toward a known trajectory and thus to 1.
 
+A surprising number of numbers lose 50% of their value. Which are these?
+
 ## Notes:
 
 - Some highly composite odds: 1, 9, 15, 45, 105, 225, 315, 945, and 1575

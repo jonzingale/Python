@@ -28,47 +28,59 @@ def pct_diff(a, b):
     return (b - a) / a
 
 def collatz_factors_pct_stepwise(n):
-    path = iterated_collatz(n)
-    print(path)
+  path = iterated_collatz(n)
+  # print(path)
 
-    factors_list = [count_factors(x) for x in path]
-    print(factors_list)
+  factors_list = [count_factors(x) for x in path]
+  # print(factors_list)
 
-    pct_diffs = []
-    for i in range(len(factors_list)-1):
-        pct_change = pct_diff(factors_list[i], factors_list[i+1])
-        pct_diffs.append(pct_change)
+  pct_diffs = []
+  for i in range(len(factors_list)-1):
+    pct_change = pct_diff(factors_list[i], factors_list[i+1])
+    pct_diffs.append(pct_change)
 
-    print(pct_diffs)
-    return pct_diffs
+  # print(pct_diffs)
+  return pct_diffs
 
 def total_returns(ps):
-    total = 1.0
-    for r in ps:
-        total *= (1 + r)
-    return total - 1
+  total = 1.0
+  for r in ps:
+    total *= (1 + r)
+  return total - 1
 
 # random numbers
 def random_numbers(n, low, high):
-    return np.random.randint(low, high + 1, size=n).tolist()
+  return np.random.randint(low, high + 1, size=n).tolist()
 
 
 # Plotting the change in the number of factors
 def main(n):
-  pct_series = collatz_factors_pct_stepwise(n)
-  total_return = total_returns(pct_series)
+    pct_series = collatz_factors_pct_stepwise(n)
+    total_return = total_returns(pct_series)
+    plt.figure(figsize=(10, 5))
+    plt.plot(range(1, len(pct_series) + 1), pct_series, marker='o')
+    plt.title(f'Percent Change in #Factors Along Collatz Path (n={n})')
+    plt.xlabel('Collatz Step')
+    plt.ylabel('Percent Change in #Factors')
+    plt.text(0.5, 0.95, f'Total Return: {total_return:.2%}', ha='center', va='center',
+             transform=plt.gca().transAxes, fontsize=12, color='red')
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+    return total_return
 
-  plt.figure(figsize=(10, 5))
-  plt.plot(range(1, len(pct_series) + 1), pct_series, marker='o')
-  plt.title(f'Percent Change in #Factors Along Collatz Path (n={n})')
-  plt.xlabel('Collatz Step')
-  plt.ylabel('Percent Change in #Factors')
-  plt.text(0.5, 0.95, f'Total Return: {total_return:.2%}', ha='center', va='center',
-           transform=plt.gca().transAxes, fontsize=12, color='red')
-  plt.grid(True)
-  plt.tight_layout()
-  plt.show()
+# Collect total returns from random sampling
+total_returns_list = []
+random_n_list = random_numbers(20, 99, 99999)
+for i in random_n_list:
+    ret = main(i)
+    total_returns_list.append(ret)
 
-# main(9999)
-for i in random_numbers(20, 99, 9999):
-  main(i)
+# Plot histogram of total returns
+plt.figure(figsize=(8, 5))
+plt.hist(total_returns_list, bins=10, color='skyblue', edgecolor='black')
+plt.title('Histogram of Total Returns from Random Collatz Paths')
+plt.xlabel('Total Return')
+plt.ylabel('Frequency')
+plt.tight_layout()
+plt.show()

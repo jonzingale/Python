@@ -10,6 +10,9 @@
 
 - 2^n are rare but deadly
 - n with 3|n never return to an m with 3|m unless 2|n
+- The collatz tree has a non-unitary first eigenvalue <-> counterexample
+- numbers with many distinct factors are likely to transition to primes
+- Are n with 3|n nearer wandering sets, if there are wandering sets?
 
 ## Factor returns
 

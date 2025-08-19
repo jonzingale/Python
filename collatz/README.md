@@ -6,6 +6,11 @@
 - `pip install pandas pyarrow` for reading `*.parquet` files
 
 
+## Theorems and Intuitions
+
+- 2^n are rare but deadly
+- n with 3|n never return to an m with 3|m unless 2|n
+
 ## Factor returns
 
 Calculate the average change in the number of factors. The intuition here is

@@ -1,4 +1,4 @@
-# Collatz's Big Icecream Problem
+# Collatz's Big Ice Cream Problem
 
 ## Setup
 
@@ -13,6 +13,7 @@
 - The collatz tree has a non-unitary first eigenvalue <-> counterexample
 - numbers with many distinct factors are likely to transition to primes
 - Are n with 3|n nearer wandering sets, if there are wandering sets?
+- Is the 'gravity' of a non-collatz number bound 1 < n <= 3/2
 
 ## Factor returns
 

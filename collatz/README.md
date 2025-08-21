@@ -1,5 +1,10 @@
 # Collatz's Big Ice Cream Problem
 
+## PTO TODO:
+
+- verify long chains of `3*2^k` after multiple of 3
+- harmonic analysis of branches and multiples of 3
+
 ## Setup
 
 - `https://www.kaggle.com/datasets/clmentscipion/collatz-sequences-and-metrics-dataset?resource=download`
@@ -15,6 +20,8 @@
 - Are n with 3|n nearer wandering sets, if there are wandering sets?
 - Is the 'gravity' of a non-collatz number bound 1 < n <= 3/2
 - No more branching after a multiple of 3, only multiples of `3*2^k`
+- multiplying by 3 and adding 1 ensures successor of odd has no factors in common,
+  nor 3 as a factor
 
 ## Would Be Nice
 

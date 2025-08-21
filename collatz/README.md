@@ -14,6 +14,17 @@
 - numbers with many distinct factors are likely to transition to primes
 - Are n with 3|n nearer wandering sets, if there are wandering sets?
 - Is the 'gravity' of a non-collatz number bound 1 < n <= 3/2
+- No more branching after a multiple of 3, only multiples of `3*2^k`
+
+## Would Be Nice
+
+- Every path with a number divisible by 3 goes to 1
+
+## Wonderings
+
+- To what extent are 3n's random?
+- What is the relationship between branchings and multiples of 3?
+
 
 ## Factor returns
 

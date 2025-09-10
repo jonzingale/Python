@@ -75,3 +75,4 @@ val1 = poly1(7)
 val2 = poly2(7)
 
 print(val1, val2, "rational")  # Should be equal
+print([(round(poly1(i)), round(poly2(i))) for i in range(0,8) ])

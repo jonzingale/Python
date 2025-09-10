@@ -53,16 +53,25 @@ val2 = np.polyval(b_coeffs, 7)
 print(val1, val2, "float")  # Should be equal
 
 # Rational
-a_coeffs = [
-    Fraction(9,997), Fraction(163,-948), Fraction(739,601), Fraction(691,-172),
-    Fraction(2557,448), Fraction(645,-871), Fraction(489,490)
-]
-val1 = np.polyval(a_coeffs, 7)
+poly1 = lambda x: \
+    (9/997) * x**6 + \
+    (163/-948) * x**5 + \
+    (739/601) * x**4 + \
+    (691/-172) * x**3 + \
+    (2557/448) * x**2 + \
+    (645/-871) * x**1 + \
+    (489/490)
 
-b_coeffs = [
-    Fraction(1,288), Fraction(32,-789), Fraction(46,555), Fraction(293,590),
-    Fraction(1185,-583), Fraction(2060,593), Fraction(491,490)
-]
-val2 = np.polyval(b_coeffs, 7)
+poly2 = lambda x: \
+    (1/288) * x**6 + \
+    (32/-789) * x**5 + \
+    (46/555) * x**4 + \
+    (293/590) * x**3 + \
+    (1185/-583) * x**2 + \
+    (2060/593) * x**1 + \
+    (491/490)
+
+val1 = poly1(7)
+val2 = poly2(7)
 
 print(val1, val2, "rational")  # Should be equal

@@ -1,3 +1,5 @@
+from fractions import Fraction
+from decimal import Decimal
 import numpy as np
 
 # first try (no common constraint)
@@ -26,19 +28,19 @@ V = np.vander(n, 7)
 
 # Build block diagonal system
 A = np.block([
-    [V, np.zeros_like(V)],          # equations for first sequence
-    [np.zeros_like(V), V]           # equations for second sequence
+    [V, np.zeros_like(V)],      # equations for first sequence
+    [np.zeros_like(V), V]       # equations for second sequence
 ])
 
 b = np.concatenate([y1, y2])
 
 # Add the constraint at n=7
 constraint_row = np.concatenate([
-    7 ** np.arange(6, -1, -1),      # a coefficients multiplied by n=7 powers
-    -7 ** np.arange(6, -1, -1)      # b coefficients (negative to enforce equality)
+    7 ** np.arange(6, -1, -1),  # a coefficients multiplied by n=7 powers
+    -7 ** np.arange(6, -1, -1)  # b coefficients (negative to enforce equality)
 ])
 A = np.vstack([A, constraint_row])
-b = np.append(b, 0)                # The constraint equation equates to 0
+b = np.append(b, 0)             # The constraint equation equates to 0
 
 # Solve for 14 coefficients (a0..a6, b0..b6)
 solution = np.linalg.lstsq(A, b, rcond=None)[0]
@@ -48,4 +50,19 @@ b_coeffs = solution[7:]
 # Check values at n=7
 val1 = np.polyval(a_coeffs, 7)
 val2 = np.polyval(b_coeffs, 7)
-print(val1, val2)  # Should be equal
+print(val1, val2, "float")  # Should be equal
+
+# Rational
+a_coeffs = [
+    Fraction(9,997), Fraction(163,-948), Fraction(739,601), Fraction(691,-172),
+    Fraction(2557,448), Fraction(645,-871), Fraction(489,490)
+]
+val1 = np.polyval(a_coeffs, 7)
+
+b_coeffs = [
+    Fraction(1,288), Fraction(32,-789), Fraction(46,555), Fraction(293,590),
+    Fraction(1185,-583), Fraction(2060,593), Fraction(491,490)
+]
+val2 = np.polyval(b_coeffs, 7)
+
+print(val1, val2, "rational")  # Should be equal

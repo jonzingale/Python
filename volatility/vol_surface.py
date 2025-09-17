@@ -52,6 +52,12 @@ def solve_laplacian(surface, tol=1e-4, max_iter=2000, zero_thresh=1e-8):
     result = arr.copy()
     return pd.DataFrame(result, index=surface.index, columns=surface.columns)
 
+def nan_density(df):
+    nan_count = df.isna().sum().sum()
+    total = df.size
+    density = nan_count / total
+    return nan_count, total, density
+
 def main():
     parser = argparse.ArgumentParser(
         description="Plot option volatility surface"
@@ -82,6 +88,9 @@ def main():
         aggfunc='mean'
     )
     surface_filled = surface.copy().fillna(0.0)
+
+    _, _, bad_dense = nan_density(surface)
+
     surface = solve_laplacian(surface_filled)
     x, y, z = surface.columns.values, surface.index.values, surface.values
     X, Y = np.meshgrid(x, y)
@@ -91,7 +100,11 @@ def main():
     ax.set_xlabel('Days to expiration')
     ax.set_ylabel('Strike price')
     ax.set_zlabel('Implied volatility')
-    ax.set_title(f"Call implied volatility surface: {ticker}")
+    # Ticker and percentage of known data used to render
+    ax.set_title(
+        f"Call implied volatility surface: {ticker}, "
+        f"δ data-good: {100 * (1-bad_dense):.2f}%"
+    )
 
     surf = ax.plot_surface(X, Y, z, cmap='coolwarm', edgecolor='none')
     fig.colorbar(surf, ax=ax, shrink=0.5, aspect=8)

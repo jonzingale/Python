@@ -75,38 +75,76 @@ content.text = (
     "  - User sets filters and rules to include/exclude securities\n"
 )
 
-# Workflow Visualization Slide (diagrammatic)
-slide = p.slides.add_slide(p.slide_layouts[5])  # blank layout for diagram
-slide.shapes.title.text = "Application Workflow Overview"
+# Module Diagram
+slide = p.slides.add_slide(p.slide_layouts[5])
+slide.shapes.title.text = "Application Workflow Diagram"
 
-workflow_boxes = [
-    {"label": "Inputs:\nInventory\n(BBG, Markit)", "x": 0.5, "y": 2},
-    {"label": "Security Master Table", "x": 3, "y": 2},
-    {"label": "Portfolio Shape & Constraints", "x": 6, "y": 2},
-    {"label": "Basket File Output (CSV)", "x": 9, "y": 2}
+# Element positions as {label, x, y}
+boxes = [
+    # Data sources
+    {"label": "BBG\n(System Data)", "x": 0.5, "y": 1.0},
+    {"label": "Markit\n(System Data)", "x": 0.5, "y": 2.2},
+    {"label": "Inventory\n(User Input)", "x": 0.5, "y": 3.4},
+
+    # Central data table
+    {"label": "Security Master", "x": 3.2, "y": 2.2},
+
+    # Controls & feedback
+    {"label": "Portfolio Shape", "x": 6.2, "y": 1.2},
+    {"label": "Constraints Table", "x": 6.2, "y": 3.2},
+
+    # Basket & output
+    {"label": "Basket View\n(securities for trade)", "x": 9.2, "y": 2.2},
+    {"label": "Output\nCSV Basket File", "x": 12.0, "y": 2.2},
 ]
 
-# Add rectangles as process boxes
-for b in workflow_boxes:
-    box = slide.shapes.add_shape(
+# Draw boxes
+shape_map = {}
+for b in boxes:
+    shape = slide.shapes.add_shape(
         MSO_SHAPE.RECTANGLE,
         Inches(b["x"]), Inches(b["y"]),
         Inches(2.2), Inches(1.1)
     )
-    box.text = b["label"]
+    shape.text = b["label"]
+    shape_map[b["label"]] = shape
 
-# Add left-to-right connectors between the boxes
-for i in range(len(workflow_boxes) - 1):
-    start_x = workflow_boxes[i]["x"] + 2.2
-    start_y = workflow_boxes[i]["y"] + 0.55
-    end_x = workflow_boxes[i+1]["x"]
-    end_y = workflow_boxes[i+1]["y"] + 0.55
+# Connectors/arrows (start, end) by label
+connectors = [
+    # Data sources to Security Master
+    ("BBG\n(System Data)", "Security Master"),
+    ("Markit\n(System Data)", "Security Master"),
+    ("Inventory\n(User Input)", "Security Master"),
+    # Security Master to Portfolio Shape and Constraints Table
+    ("Security Master", "Portfolio Shape"),
+    ("Security Master", "Constraints Table"),
+    # Feedback arrows (Portfolio Shape <-> Security Master)
+    ("Portfolio Shape", "Security Master"),
+    # Constraints to Portfolio Shape
+    ("Constraints Table", "Portfolio Shape"),
+    # Portfolio Shape to Basket View
+    ("Portfolio Shape", "Basket View\n(securities for trade)"),
+    # Constraints Table to Basket View
+    ("Constraints Table", "Basket View\n(securities for trade)"),
+    # Basket View to Output
+    ("Basket View\n(securities for trade)", "Output\nCSV Basket File"),
+]
 
+# Draw arrows
+for start, end in connectors:
+    start_shape = shape_map[start]
+    end_shape = shape_map[end]
+    start_x = (start_shape.left + start_shape.width)
+    start_y = (start_shape.top + start_shape.height / 2)
+    end_x = end_shape.left
+    end_y = (end_shape.top + end_shape.height / 2)
     slide.shapes.add_connector(
         MSO_CONNECTOR.STRAIGHT,
-        Inches(start_x), Inches(start_y),
-        Inches(end_x), Inches(end_y)
+        start_x, start_y,
+        end_x, end_y
     )
+
+# Optional: adjust arrow directions, styles, box colors, and add explanation
 
 # Next Steps / Open Questions
 slide = p.slides.add_slide(p.slide_layouts[1])

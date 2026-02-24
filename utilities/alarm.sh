@@ -19,7 +19,26 @@ fi
 
 sleep_sec=$(( target_sec - now_sec ))
 
-echo "Alarm set for next 7:00 AM. Sleeping for ${sleep_sec} seconds..."
+# Convert 24h -> 12h and AM/PM
+if (( TARGET_HOUR == 0 )); then
+  hour12=12
+  ampm="AM"
+elif (( TARGET_HOUR < 12 )); then
+  hour12=$TARGET_HOUR
+  ampm="AM"
+elif (( TARGET_HOUR == 12 )); then
+  hour12=12
+  ampm="PM"
+else
+  hour12=$(( TARGET_HOUR - 12 ))
+  ampm="PM"
+fi
+
+printf -v timestr "%02d:%02d" "$hour12" "$TARGET_MIN"
+
+echo "Alarm set for next ${timestr} ${ampm}. Sleeping for ${sleep_sec} seconds..."
+
+
 sleep "${sleep_sec}"
 
 # Alarm action: pick any one of these or customize
